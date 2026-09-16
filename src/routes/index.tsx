@@ -1,3 +1,5 @@
+import PageContainer from '../components/PageContainer'
+import { Heading } from '@chakra-ui/react'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/')({
@@ -5,5 +7,9 @@ export const Route = createFileRoute('/')({
 })
 
 function Index() {
-    return <div>Home</div>
+    return (
+        <PageContainer>
+            <Heading>Index Page</Heading>
+        </PageContainer>
+    )
 }
