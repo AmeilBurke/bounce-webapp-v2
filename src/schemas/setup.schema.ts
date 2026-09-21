@@ -9,7 +9,7 @@ export const SetupSchema = z
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
-    path: ["confirmPassword"], // attaches the error to this field
+    path: ["confirmPassword"],
   });
 
 export type SetupFormValues = z.infer<typeof SetupSchema>;

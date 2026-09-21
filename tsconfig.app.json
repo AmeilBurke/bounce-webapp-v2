@@ -31,6 +31,8 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "src"
+    "src",
+    "vite.config.ts",
+    "shared"
   ]
 }

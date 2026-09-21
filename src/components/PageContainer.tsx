@@ -8,7 +8,7 @@ type PageContainerProps = {
 
 const PageContainer = ({ children, props }: PageContainerProps) => {
   return (
-    <Container p={8} {...props} >
+    <Container minH={'100dvh'} w="full" maxW={'100vw'} p={[4, null, null, 16]} {...props}>
       {children}
     </Container>
   )

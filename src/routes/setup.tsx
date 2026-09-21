@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 import getJwt from "@/api-requests/auth/getJwt";
 import Form from "@/components/Form";
 import { useQueryClient } from "@tanstack/react-query";
+import createAdminImage from "../assets/create-admin.png";
 
 export const Route = createFileRoute("/setup")({
   component: RouteComponent,
@@ -50,17 +51,13 @@ function RouteComponent() {
       toast.success("Account Created");
 
       const jwt = (await getJwt(data.email, data.password)).access_token;
-      console.log("jwt");
-      console.log(jwt);
 
       localStorage.setItem("jwt", jwt);
 
       queryClient.invalidateQueries({ queryKey: ["setup-status"] });
 
       await navigate({ to: "/" });
-    } catch (err) {
-      // const error = err as AxiosError<{ message?: string; field?: string }>;
-
+    } catch {
       setError("root.serverError", {
         type: "server",
         message: "Something went wrong. Please try again.",
@@ -71,12 +68,19 @@ function RouteComponent() {
   return (
     <LayoutCreate
       heading="Let's Get Started"
-      subheading="Create an admin account"
+      subheading="Create a admin account"
+      imagePath={createAdminImage}
     >
       <Form w="full" onSubmit={handleSubmit(onCreateAdmin)}>
-        <Stacker direction="column" >
+        <Stacker direction="column">
           <SetupForm control={control} errors={errors} />
-          <Button w="full" type="submit" disabled={!isValid} loading={isSubmitting}>
+          <Button
+            w={["full", null, null, "auto"]}
+            type="submit"
+            alignSelf={"flex-end"}
+            disabled={!isValid}
+            loading={isSubmitting}
+          >
             Create Account
           </Button>
         </Stacker>

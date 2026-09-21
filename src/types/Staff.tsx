@@ -1,8 +1,9 @@
 import type { Role } from "./Role";
 
 export type Staff = {
+    id: string;
     name: string;
     email: string;
-    password: string;
     role: Role
+    password?: string;
 }

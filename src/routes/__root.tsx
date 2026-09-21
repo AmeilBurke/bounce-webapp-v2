@@ -1,28 +1,26 @@
-import { setupStatusQueryOptions } from '../api-requests/setup/setup.queries';
-import type { QueryClient } from '@tanstack/react-query';
-import { createRootRouteWithContext, Outlet, redirect } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+import { setupStatusQueryOptions } from "../api-requests/setup/setup.queries";
+import { type QueryClient } from "@tanstack/react-query";
+import {
+    createRootRouteWithContext,
+    Outlet,
+    redirect,
+} from "@tanstack/react-router";
 
 export const Route = createRootRouteWithContext<{
     queryClient: QueryClient;
 }>()({
     beforeLoad: async ({ context, location }) => {
         const isSetupComplete = await context.queryClient.query(
-            setupStatusQueryOptions
+            setupStatusQueryOptions,
         );
 
-        if (!isSetupComplete && location.pathname !== '/setup') {
-            throw redirect({ to: '/setup' });
+        if (!isSetupComplete && location.pathname !== "/setup") {
+            throw redirect({ to: "/setup" });
         }
 
-        if (isSetupComplete && location.pathname === '/setup') {
-            throw redirect({ to: '/' });
+        if (isSetupComplete && location.pathname === "/setup") {
+            throw redirect({ to: "/" });
         }
     },
-    component: () => (
-        <>
-            <Outlet />
-            <TanStackRouterDevtools />
-        </>
-    ),
-})
+    component: () => <Outlet />,
+});

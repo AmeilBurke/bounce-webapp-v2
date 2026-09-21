@@ -8,9 +8,9 @@ type PageHeadingProps = {
 
 const PageHeading = ({ heading, subheading }: PageHeadingProps) => {
   return (
-    <Stacker direction={"column"} gap={1}>
-      <Heading>{heading}</Heading>
-      <Text>{subheading}</Text>
+    <Stacker direction={"column"} gap={4}>
+      <Heading fontSize={['3xl', null, null, '5xl']} fontWeight={'bold'} textTransform='capitalize'>{heading}</Heading>
+      <Text color={"#555555"} >{subheading}</Text>
     </Stacker>
   );
 };
