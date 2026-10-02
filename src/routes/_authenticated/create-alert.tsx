@@ -11,7 +11,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { io } from "socket.io-client";
 
 export const Route = createFileRoute("/_authenticated/create-alert")({
   component: RouteComponent,

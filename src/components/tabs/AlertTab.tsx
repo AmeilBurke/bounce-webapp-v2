@@ -11,6 +11,7 @@ import Dialog from "../Dialog";
 import type { Alert } from "@/types/Alert";
 import deleteAlert from "@/api-requests/alerts/deleteAlert";
 import toast from "react-hot-toast";
+import { Role } from "@/types/Role";
 
 const AlertTab = () => {
     const navigate = useNavigate();
@@ -28,12 +29,10 @@ const AlertTab = () => {
         try {
             await deleteAlert(alertIdToDelete);
 
-            // toast.success("Alert deleted");
-
             await queryClient.invalidateQueries({ queryKey: ["alerts"] });
 
             closeDialog();
-        } catch(err) {
+        } catch (err) {
             toast.error(String(err));
             toast.error("Couldn't delete alert");
         }
@@ -60,7 +59,7 @@ const AlertTab = () => {
                         onOpen={() => setAlertIdToDelete(alert.id)}
                         imagePath={alert.imagePath}
                         reason={alert.reason}
-                        isAdmin={user?.role === "ADMIN"}
+                        isAdmin={user?.role === Role.ADMIN}
                     />
                 ))}
             </SimpleGrid>

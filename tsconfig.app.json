@@ -12,6 +12,7 @@
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "lib": [
       "ES2023",
+      "ES2024",
       "DOM"
     ],
     "types": [

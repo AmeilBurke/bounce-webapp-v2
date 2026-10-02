@@ -13,6 +13,7 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as SetupRouteImport } from './routes/setup'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedCreateAccountRouteImport } from './routes/_authenticated/create-account'
 import { Route as AuthenticatedCreateAlertRouteImport } from './routes/_authenticated/create-alert'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -34,6 +35,12 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedCreateAccountRoute =
+  AuthenticatedCreateAccountRouteImport.update({
+    id: '/create-account',
+    path: '/create-account',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedCreateAlertRoute =
   AuthenticatedCreateAlertRouteImport.update({
     id: '/create-alert',
@@ -45,11 +52,13 @@ export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/setup': typeof SetupRoute
   '/sign-in': typeof SignInRoute
+  '/create-account': typeof AuthenticatedCreateAccountRoute
   '/create-alert': typeof AuthenticatedCreateAlertRoute
 }
 export interface FileRoutesByTo {
   '/setup': typeof SetupRoute
   '/sign-in': typeof SignInRoute
+  '/create-account': typeof AuthenticatedCreateAccountRoute
   '/create-alert': typeof AuthenticatedCreateAlertRoute
   '/': typeof AuthenticatedIndexRoute
 }
@@ -58,19 +67,21 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/setup': typeof SetupRoute
   '/sign-in': typeof SignInRoute
+  '/_authenticated/create-account': typeof AuthenticatedCreateAccountRoute
   '/_authenticated/create-alert': typeof AuthenticatedCreateAlertRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/setup' | '/sign-in' | '/create-alert'
+  fullPaths: '/' | '/setup' | '/sign-in' | '/create-account' | '/create-alert'
   fileRoutesByTo: FileRoutesByTo
-  to: '/setup' | '/sign-in' | '/create-alert' | '/'
+  to: '/setup' | '/sign-in' | '/create-account' | '/create-alert' | '/'
   id:
     | '__root__'
     | '/_authenticated'
     | '/setup'
     | '/sign-in'
+    | '/_authenticated/create-account'
     | '/_authenticated/create-alert'
     | '/_authenticated/'
   fileRoutesById: FileRoutesById
@@ -111,6 +122,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/create-account': {
+      id: '/_authenticated/create-account'
+      path: '/create-account'
+      fullPath: '/create-account'
+      preLoaderRoute: typeof AuthenticatedCreateAccountRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/create-alert': {
       id: '/_authenticated/create-alert'
       path: '/create-alert'
@@ -122,11 +140,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedCreateAccountRoute: typeof AuthenticatedCreateAccountRoute
   AuthenticatedCreateAlertRoute: typeof AuthenticatedCreateAlertRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedCreateAccountRoute: AuthenticatedCreateAccountRoute,
   AuthenticatedCreateAlertRoute: AuthenticatedCreateAlertRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
 }

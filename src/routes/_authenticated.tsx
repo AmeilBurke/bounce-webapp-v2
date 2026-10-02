@@ -31,7 +31,7 @@ function AuthenticatedLayout() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log("socket url:", import.meta.env.VITE_API_URL);
+        // console.log("socket url:", import.meta.env.VITE_API_URL);
 
         const onAlertCreated = () => {
             toast("Alert uploaded");
