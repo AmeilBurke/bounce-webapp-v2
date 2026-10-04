@@ -8,7 +8,6 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { userDetailsQueryOptions } from "@/api-requests/auth/user.queries";
 import { socket } from "@/socket";
-import toast from "react-hot-toast";
 
 export const Route = createFileRoute("/_authenticated")({
     beforeLoad: async ({ context }) => {
@@ -33,13 +32,12 @@ function AuthenticatedLayout() {
     useEffect(() => {
         // console.log("socket url:", import.meta.env.VITE_API_URL);
 
-        const onAlertCreated = () => {
-            toast("Alert uploaded");
+        const onAlertChange = () => {
             queryClient.invalidateQueries({ queryKey: ["alerts"] });
         };
 
-        const onAlertDeleted = () => {
-            queryClient.invalidateQueries({ queryKey: ["alerts"] });
+        const onStaffChange = () => {
+            queryClient.invalidateQueries({ queryKey: ["staff"] });
         };
 
         const onConnectError = (err: Error) => {
@@ -49,14 +47,14 @@ function AuthenticatedLayout() {
             }
         };
 
-        socket.on("alert_created", onAlertCreated);
-        socket.on("alert_deleted", onAlertDeleted);
+        socket.on("alert", onAlertChange);
+        socket.on("staff", onStaffChange);
         socket.on("connect_error", onConnectError);
         socket.connect();
 
         return () => {
-            socket.off("alert_created", onAlertCreated);
-            socket.off("alert_deleted", onAlertDeleted);
+            socket.off("alert_created", onAlertChange);
+            socket.off("alert_deleted", onStaffChange);
             socket.off("connect_error", onConnectError);
             socket.disconnect();
         };

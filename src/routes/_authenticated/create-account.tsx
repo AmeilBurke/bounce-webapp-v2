@@ -9,6 +9,7 @@ import { Button } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { AxiosError, isAxiosError } from 'axios'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 
@@ -59,7 +60,16 @@ function RouteComponent() {
             }
 
             await navigate({ to: "/" });
-        } catch {
+        } catch (err: unknown) {
+            if (isAxiosError(err) && err.response?.status === 409) {
+                setError("email", {
+                    type: "server",
+                    message: "Email is already in use",
+                });
+                return;
+            }
+
+            toast.error("Something went wrong. Please try again.");
             setError("root.serverError", {
                 type: "server",
                 message: "Something went wrong. Please try again.",

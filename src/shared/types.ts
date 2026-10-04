@@ -1,5 +1,6 @@
 export interface ServerToClientEvents {
-  alert_created: () => void;
+  alert: () => void;
+  staff: () => void;
 }
 
-export interface ClientToServerEvents {}
+export interface ClientToServerEvents { }

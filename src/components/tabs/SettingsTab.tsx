@@ -83,21 +83,6 @@ const SettingsTab = () => {
 
     const closeDialog = () => setChosenStaff(undefined);
 
-    const onAlertDelete = async () => {
-        if (chosenStaff === undefined) return;
-
-        // try {
-        //     await deleteAlert(alertIdToDelete);
-
-        //     await queryClient.invalidateQueries({ queryKey: ["alerts"] });
-
-        //     closeDialog();
-        // } catch (err) {
-        //     toast.error(String(err));
-        //     toast.error("Couldn't delete alert");
-        // }
-    };
-
     return (
         <Stacker direction="column">
             <CreateButton text="Create New Account" onClick={onCreateNewAccount} />
@@ -111,7 +96,7 @@ const SettingsTab = () => {
                 title={`Account Details For ${chosenStaff?.name}`}
                 body={
                     user?.role === Role.ADMIN || user?.id === chosenStaff?.id
-                        ? <DialogBodyEdit chosenStaff={chosenStaff} />
+                        ? <DialogBodyEdit chosenStaff={chosenStaff} closeDialog={closeDialog} />
                         : <DialogBodyView chosenStaff={chosenStaff} />
                 }
                 footer={<></>}
