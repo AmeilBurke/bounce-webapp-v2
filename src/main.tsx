@@ -10,6 +10,7 @@ import "@fontsource/inter/500.css";
 import "@fontsource/inter/600.css";
 import "@fontsource/inter/700.css";
 import system from './theme'
+import ErrorPage from './components/ErrorPage'
 
 const queryClient = new QueryClient();
 
@@ -18,6 +19,7 @@ const router = createRouter({
   context: {
     queryClient,
   },
+  defaultErrorComponent: ErrorPage,
 });
 
 declare module '@tanstack/react-router' {

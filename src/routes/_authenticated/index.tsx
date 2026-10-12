@@ -19,6 +19,7 @@ function Index() {
     const { data: user } = useQuery(userDetailsQueryOptions);
 
     const [activeTab, setActiveTab] = useState("alerts");
+    // throw new Error("Test error");
 
     return (
         <PageContainer>

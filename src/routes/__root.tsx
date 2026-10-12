@@ -1,3 +1,4 @@
+import ErrorPage from "@/components/ErrorPage";
 import { setupStatusQueryOptions } from "../api-requests/setup/setup.queries";
 import { type QueryClient } from "@tanstack/react-query";
 import {
@@ -23,4 +24,5 @@ export const Route = createRootRouteWithContext<{
         }
     },
     component: () => <Outlet />,
+    errorComponent: ErrorPage
 });
