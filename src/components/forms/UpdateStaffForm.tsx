@@ -2,13 +2,13 @@ import { Controller, type Control, type FieldErrors } from "react-hook-form";
 import FieldInput from "@/components/FieldInput";
 import { Role } from "@/types/Role";
 import FieldSingleSelect from "../FieldSingleSelect";
-import type { EditStaffFormValues } from "@/schemas/update-staff.schema";
+import type { UpdateStaffFormValues } from "@/schemas/update-staff.schema";
 import { userDetailsQueryOptions } from "@/api-requests/auth/user.queries";
 import { useQuery } from "@tanstack/react-query";
 
 type UpdateStaffFieldsProps = {
-    control: Control<EditStaffFormValues>;
-    errors: FieldErrors<EditStaffFormValues>;
+    control: Control<UpdateStaffFormValues>;
+    errors: FieldErrors<UpdateStaffFormValues>;
 };
 
 const UpdateStaffForm = ({ control, errors }: UpdateStaffFieldsProps) => {

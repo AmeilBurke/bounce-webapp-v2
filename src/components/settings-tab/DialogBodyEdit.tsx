@@ -21,15 +21,19 @@ import { Role } from "@/types/Role";
 
 type DialogBodyEditProps = {
   chosenStaff: Staff | undefined;
-  closeDialog: () => void;
+  closeDialog?: () => void;
+  closeFinishDialog?: () => void;
 };
 
-const DialogBodyEdit = ({ chosenStaff, closeDialog }: DialogBodyEditProps) => {
+const DialogBodyEdit = ({
+  chosenStaff,
+  closeDialog,
+  closeFinishDialog,
+}: DialogBodyEditProps) => {
   const {
     control,
     handleSubmit,
-    setError,
-    formState: { errors, isValid, isSubmitting },
+    formState: { errors, isSubmitting },
   } = useForm<UpdateStaffFormValues>({
     resolver: zodResolver(UpdateStaffSchema),
     mode: "onChange",
@@ -43,7 +47,15 @@ const DialogBodyEdit = ({ chosenStaff, closeDialog }: DialogBodyEditProps) => {
   const queryClient = useQueryClient();
   const { data: user } = useQuery(userDetailsQueryOptions);
 
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const staffName = chosenStaff?.name ?? "";
+
+  const finish = () => {
+    closeDialog?.();
+    closeFinishDialog?.();
+  };
 
   const onEditStaff = async (data: UpdateStaffFormValues) => {
     if (chosenStaff === undefined) return;
@@ -59,26 +71,30 @@ const DialogBodyEdit = ({ chosenStaff, closeDialog }: DialogBodyEditProps) => {
       await editStaff(updateStaffDto, chosenStaff.id);
       toast.success("Details Updated");
       await queryClient.invalidateQueries({ queryKey: ["staff"] });
-
-      closeDialog();
+      finish();
     } catch (err) {
-      toast.error(String(err));
-      toast.error("Couldn't update details");
+      toast.error(
+        err instanceof Error ? err.message : "Couldn't update details",
+      );
     }
   };
 
   const onDeleteStaff = async () => {
     if (chosenStaff === undefined) return;
 
+    setIsDeleting(true);
     try {
       const result = await deleteStaff(chosenStaff.id);
       toast.success(result);
       await queryClient.invalidateQueries({ queryKey: ["staff"] });
       setIsDeleteDialogOpen(false);
-      closeDialog();
+      finish();
     } catch (err) {
-      toast.error(String(err));
-      toast.error("Couldn't update details");
+      toast.error(
+        err instanceof Error ? err.message : "Couldn't delete account",
+      );
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -89,31 +105,29 @@ const DialogBodyEdit = ({ chosenStaff, closeDialog }: DialogBodyEditProps) => {
           <UpdateStaffForm control={control} errors={errors} />
 
           <HStack w="full" justify="flex-end">
-            {
-              user?.role === Role.ADMIN && (
-                <Button
-                  onClick={() => setIsDeleteDialogOpen(true)}
-                  colorPalette={"red"}
-                  mr="auto"
-                >
-                  Delete
-                </Button>
-              )
-            }
-            <Button onClick={handleSubmit(onEditStaff)}>Update Details</Button>
+            {user?.role === Role.ADMIN && (
+              <Button
+                onClick={() => setIsDeleteDialogOpen(true)}
+                colorPalette="red"
+                mr="auto"
+              >
+                Delete
+              </Button>
+            )}
+            <Button onClick={handleSubmit(onEditStaff)} loading={isSubmitting}>
+              Update Details
+            </Button>
           </HStack>
         </Stacker>
       </Form>
 
       <Dialog
         isOpen={isDeleteDialogOpen}
-        setIsOpen={(open) => {
-          if (!open) setIsDeleteDialogOpen(false);
-        }}
-        title={`Delete ${chosenStaff?.name}'s Account?`}
+        setIsOpen={setIsDeleteDialogOpen}
+        title={`Delete ${staffName}'s Account?`}
         body={
           <Text>
-            This will permanently delete the alert. This action cannot be
+            This will permanently delete this account. This action cannot be
             undone.
           </Text>
         }
@@ -125,7 +139,11 @@ const DialogBodyEdit = ({ chosenStaff, closeDialog }: DialogBodyEditProps) => {
             >
               Cancel
             </Button>
-            <Button onClick={onDeleteStaff} colorPalette="red">
+            <Button
+              onClick={onDeleteStaff}
+              colorPalette="red"
+              loading={isDeleting}
+            >
               Delete
             </Button>
           </>

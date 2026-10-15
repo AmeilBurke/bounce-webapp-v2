@@ -1,8 +1,4 @@
-import {
-    Dialog as ChakraDialog,
-    Portal,
-    CloseButton,
-} from "@chakra-ui/react";
+import { Dialog as ChakraDialog, Portal, CloseButton } from "@chakra-ui/react";
 import type { ReactElement } from "react";
 
 type DialogProps = {
@@ -10,15 +6,24 @@ type DialogProps = {
     setIsOpen: (open: boolean) => void;
     title: string;
     body: ReactElement;
-    footer: ReactElement;
+    footer?: ReactElement;
+    onExitComplete?: () => void;
 };
 
-const Dialog = ({ isOpen, setIsOpen, title, body, footer }: DialogProps) => {
+const Dialog = ({
+    isOpen,
+    setIsOpen,
+    title,
+    body,
+    footer,
+    onExitComplete,
+}: DialogProps) => {
     return (
         <ChakraDialog.Root
             open={isOpen}
             onOpenChange={(e) => setIsOpen(e.open)}
-            role="alertdialog"
+            onExitComplete={onExitComplete}
+            role="dialog"
             placement="center"
             closeOnEscape
             closeOnInteractOutside
@@ -31,9 +36,7 @@ const Dialog = ({ isOpen, setIsOpen, title, body, footer }: DialogProps) => {
                             <ChakraDialog.Title>{title}</ChakraDialog.Title>
                         </ChakraDialog.Header>
                         <ChakraDialog.Body>{body}</ChakraDialog.Body>
-                        <ChakraDialog.Footer>
-                            {footer}
-                        </ChakraDialog.Footer>
+                        {footer && <ChakraDialog.Footer>{footer}</ChakraDialog.Footer>}
                         <ChakraDialog.CloseTrigger asChild>
                             <CloseButton size="sm" />
                         </ChakraDialog.CloseTrigger>

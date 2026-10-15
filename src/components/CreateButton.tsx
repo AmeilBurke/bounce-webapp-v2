@@ -4,13 +4,12 @@ import { TfiPlus } from "react-icons/tfi";
 type CreateButtonProps = {
     text: string;
     onClick: () => void;
+    isLoading?: boolean;
 }
 
-// need to figure out why this wont navigate
-
-const CreateButton = ({ text, onClick }: CreateButtonProps) => {
+const CreateButton = ({ text, onClick, isLoading }: CreateButtonProps) => {
     return (
-        <Button onClick={onClick} variant={'subtle'} colorPalette={'orange'} >{text} <TfiPlus /></Button>
+        <Button onClick={onClick} variant={'subtle'} colorPalette={'orange'} loading={isLoading} >{text} <TfiPlus /></Button>
     )
 }
 

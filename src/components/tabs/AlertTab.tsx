@@ -20,6 +20,7 @@ const AlertTab = () => {
     const { data: user } = useQuery(userDetailsQueryOptions);
     const [alertIdToDelete, setAlertIdToDelete] = useState<Alert["id"] | undefined>(undefined);
     const isDialogOpen = alertIdToDelete !== undefined;
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
     const closeDialog = () => setAlertIdToDelete(undefined);
 
@@ -27,14 +28,18 @@ const AlertTab = () => {
         if (alertIdToDelete === undefined) return;
 
         try {
+            setIsSubmitting(true);
             await deleteAlert(alertIdToDelete);
 
             await queryClient.invalidateQueries({ queryKey: ["alerts"] });
+            toast.success("Alert Deleted");
 
             closeDialog();
         } catch (err) {
             toast.error(String(err));
             toast.error("Couldn't delete alert");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -89,10 +94,10 @@ const AlertTab = () => {
                 }
                 footer={
                     <>
-                        <Button onClick={closeDialog} variant="outline">
+                        <Button onClick={closeDialog} variant="outline" loading={isSubmitting}>
                             Cancel
                         </Button>
-                        <Button onClick={onAlertDelete} colorPalette="red">
+                        <Button onClick={onAlertDelete} colorPalette="red" loading={isSubmitting}>
                             Delete
                         </Button>
                     </>
