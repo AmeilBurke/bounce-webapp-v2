@@ -8,6 +8,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { userDetailsQueryOptions } from "@/api-requests/auth/user.queries";
 import { socket } from "@/socket";
+import toast from "react-hot-toast";
 
 export const Route = createFileRoute("/_authenticated")({
     beforeLoad: async ({ context }) => {
@@ -40,6 +41,12 @@ function AuthenticatedLayout() {
             queryClient.invalidateQueries({ queryKey: ["staff"] });
         };
 
+        const onStaffDelete = () => {
+            toast.error("Your account has been deleted");
+            localStorage.removeItem("jwt");
+            navigate({ to: "/sign-in" });
+        }
+
         const onConnectError = (err: Error) => {
             if (err.message === "unauthorized") {
                 localStorage.removeItem("jwt");
@@ -49,12 +56,14 @@ function AuthenticatedLayout() {
 
         socket.on("alert", onAlertChange);
         socket.on("staff", onStaffChange);
+        socket.on("delete", onStaffDelete);
         socket.on("connect_error", onConnectError);
         socket.connect();
 
         return () => {
             socket.off("alert_created", onAlertChange);
             socket.off("alert_deleted", onStaffChange);
+            socket.off("delete", onStaffDelete);
             socket.off("connect_error", onConnectError);
             socket.disconnect();
         };

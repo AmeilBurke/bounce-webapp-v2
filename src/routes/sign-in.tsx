@@ -42,7 +42,10 @@ function RouteComponent() {
 
 
       await navigate({ to: "/" });
-    } catch {
+    } catch (error: unknown) {
+      //test this
+      toast.error(String(error));
+
       setError("root.serverError", {
         type: "server",
         message: "Something went wrong. Please try again.",
