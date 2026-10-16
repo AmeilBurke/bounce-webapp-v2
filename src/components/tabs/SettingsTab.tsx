@@ -97,11 +97,15 @@ const SettingsTab = () => {
 
     return (
         <Stacker direction="column">
-            <CreateButton
-                text="Create New Account"
-                onClick={onCreateNewAccount}
-                isLoading={isSubmitting}
-            />
+            {
+                user?.role === Role.ADMIN && (
+                    <CreateButton
+                        text="Create New Account"
+                        onClick={onCreateNewAccount}
+                        isLoading={isSubmitting}
+                    />
+                )
+            }
             <CreateButton
                 text="Sign out"
                 onClick={onSignOut}
