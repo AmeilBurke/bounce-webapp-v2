@@ -30,7 +30,7 @@ const FieldImage = ({
         accept={accept}
         acceptedFiles={value}
         onFileChange={(details) => onChange(details.acceptedFiles)}
-        
+        capture="environment"
       >
         <FileUpload.HiddenInput />
         <FileUpload.Dropzone w="full">
