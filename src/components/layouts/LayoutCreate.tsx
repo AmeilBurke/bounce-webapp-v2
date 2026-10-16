@@ -2,8 +2,7 @@ import type { ReactNode } from "react";
 import PageContainer from "../PageContainer";
 import PageHeading from "../PageHeading";
 import Stacker from "../Stacker";
-import { HStack, IconButton, Image } from "@chakra-ui/react";
-import { TfiAngleLeft } from "react-icons/tfi";
+import { HStack, Image } from "@chakra-ui/react";
 import ReturnButton from "../ReturnButton";
 
 type LayoutCreateProps = {
