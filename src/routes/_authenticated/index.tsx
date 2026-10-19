@@ -61,8 +61,35 @@ function Index() {
                         if (isTab(e.value)) navigate({ search: { tab: e.value }, replace: true });
                     }}
                     variant="enclosed"
+                    fitted
+                    // Stacker aligns to flex-start, so without this the tabs shrink to each tab's content
+                    w="full"
+                    // Leaves room so the last of the content isn't hidden behind the bottom bar
+                    pb={{ base: "calc(4.5rem + env(safe-area-inset-bottom))", md: 0 }}
                 >
-                    <Tabs.List>
+                    {/* On phones the tabs become a bottom navigation bar, like a native app */}
+                    <Tabs.List
+                        position={{ base: "fixed", md: "static" }}
+                        bottom={0}
+                        insetX={0}
+                        zIndex="sticky"
+                        rounded={{ base: 0, md: "l3" }}
+                        bg={{ base: "bg", md: "bg.muted" }}
+                        borderTopWidth={{ base: "1px", md: 0 }}
+                        pb={{ base: "calc(0.25rem + env(safe-area-inset-bottom))", md: 1 }}
+                        css={{
+                            "& [role=tab]": {
+                                flexDirection: { base: "column", md: "row" },
+                                gap: { base: 0.5, md: 2 },
+                                height: { base: "auto", md: undefined },
+                                py: { base: 1.5, md: undefined },
+                                fontSize: { base: "2xs", md: "sm" },
+                                whiteSpace: "nowrap",
+                            },
+                            // Stops long labels squashing the icon to nothing
+                            "& [role=tab] svg": { boxSize: { base: 5, md: 4 }, flexShrink: 0 },
+                        }}
+                    >
                         <Tabs.Trigger value="alerts">
                             <TfiAlert />
                             Alerts
