@@ -4,6 +4,7 @@ import { TfiAlert } from "react-icons/tfi";
 import { TfiSettings } from "react-icons/tfi";
 import { TfiHome } from "react-icons/tfi";
 import { TfiNa } from "react-icons/tfi";
+import { TfiTime } from "react-icons/tfi";
 import PageHeading from "@/components/PageHeading";
 import { useQuery } from "@tanstack/react-query";
 import { userDetailsQueryOptions } from "@/api-requests/auth/user.queries";
@@ -12,12 +13,15 @@ import AlertTab from "@/components/tabs/AlertTab";
 import SettingsTab from "@/components/tabs/SettingsTab";
 import VenuesTab from "@/components/tabs/VenuesTab";
 import BlanketBansTab from "@/components/tabs/BlanketBansTab";
+import PendingBansTab from "@/components/tabs/PendingBansTab";
 import PageContainer from "@/components/PageContainer";
+import { Role } from "@/types/Role";
 
 const TAB_LABELS = {
     alerts: "alerts",
     venues: "venues",
     "blanket-bans": "blanket bans",
+    "pending-bans": "pending bans",
     settings: "settings",
 } as const;
 
@@ -37,7 +41,11 @@ export const Route = createFileRoute("/_authenticated/")({
 function Index() {
     const { data: user } = useQuery(userDetailsQueryOptions);
     const navigate = Route.useNavigate();
-    const { tab: activeTab = "alerts" } = Route.useSearch();
+    const { tab } = Route.useSearch();
+    const isAdmin = user?.role === Role.ADMIN;
+    // Pending bans are admin only, so anyone else linked there lands on alerts
+    const activeTab: Tab =
+        tab === undefined || (tab === "pending-bans" && !isAdmin) ? "alerts" : tab;
     // throw new Error("Test error");
 
     return (
@@ -67,6 +75,12 @@ function Index() {
                             <TfiNa />
                             Blanket Bans
                         </Tabs.Trigger>
+                        {isAdmin && (
+                            <Tabs.Trigger value="pending-bans">
+                                <TfiTime />
+                                Pending Bans
+                            </Tabs.Trigger>
+                        )}
                         <Tabs.Trigger value="settings">
                             <TfiSettings />
                             Settings
@@ -81,6 +95,11 @@ function Index() {
                     <Tabs.Content value="blanket-bans">
                         <BlanketBansTab />
                     </Tabs.Content>
+                    {isAdmin && (
+                        <Tabs.Content value="pending-bans">
+                            <PendingBansTab />
+                        </Tabs.Content>
+                    )}
                     <Tabs.Content value="settings">
                         <SettingsTab />
                     </Tabs.Content>

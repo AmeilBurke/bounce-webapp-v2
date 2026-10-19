@@ -48,6 +48,7 @@ function AuthenticatedLayout() {
         // Banned people are returned with their bans, so both events refresh the same list
         const onBannedPeopleChange = () => {
             queryClient.invalidateQueries({ queryKey: ["banned-people"] });
+            queryClient.invalidateQueries({ queryKey: ["bans"] });
         };
 
         const onStaffDelete = () => {

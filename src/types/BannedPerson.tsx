@@ -26,3 +26,8 @@ export type BannedPerson = {
     imagePath: string;
     bans: Ban[];
 }
+
+// Bans fetched on their own come with the person they're for
+export type BanWithPerson = Ban & {
+    bannedPerson: Omit<BannedPerson, "bans">;
+}
