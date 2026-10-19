@@ -9,7 +9,7 @@ import Stacker from "@/components/Stacker";
 import VenueManagersEdit from "@/components/VenueManagersEdit";
 import { Role } from "@/types/Role";
 import { isBanAtVenue } from "@/utils/bans";
-import { Button, HStack, Text } from "@chakra-ui/react";
+import { Button, HStack, SkeletonText, Text } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
@@ -62,11 +62,13 @@ function RouteComponent() {
       returnArrow
     >
       <Stacker direction={"column"}>
-        {venue && (
+        {venue ? (
           <Stacker direction={"column"} gap={1}>
             <Text color="fg.muted">Venue managers: {managerNames || "None"}</Text>
             <Text color="fg.muted">Duty managers: {dutyManagerNames || "None"}</Text>
           </Stacker>
+        ) : (
+          <SkeletonText noOfLines={2} maxW="sm" />
         )}
 
         <HStack gap={2} wrap="wrap">

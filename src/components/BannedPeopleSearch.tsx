@@ -5,6 +5,7 @@ import BannedPersonCard from "./BannedPersonCard";
 import Dialog from "./Dialog";
 import FieldInput from "./FieldInput";
 import Stacker from "./Stacker";
+import { CardGridSkeleton, ImageCardSkeleton } from "./Skeletons";
 import type { BannedPerson } from "@/types/BannedPerson";
 import { isBanActive } from "@/utils/bans";
 
@@ -37,7 +38,7 @@ const BannedPeopleSearch = ({ people, isPending, isError, emptyText }: BannedPeo
 
     const renderPeople = () => {
         if (isPending) {
-            return <Text>Loading banned people...</Text>;
+            return <CardGridSkeleton card={<ImageCardSkeleton lines={2} />} />;
         }
 
         if (isError) {

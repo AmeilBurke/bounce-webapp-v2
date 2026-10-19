@@ -7,6 +7,7 @@ import { Heading, Text } from "@chakra-ui/react";
 import { useMemo, useState } from "react";
 import { Role } from "@/types/Role";
 import Dialog from "../Dialog";
+import { StaffListSkeleton } from "../Skeletons";
 import type { Staff } from "@/types/Staff";
 import { userDetailsQueryOptions } from "@/api-requests/auth/user.queries";
 import DialogBodyEdit from "../settings-tab/DialogBodyEdit";
@@ -55,7 +56,7 @@ const SettingsTab = () => {
 
     const renderStaff = () => {
         if (isPending) {
-            return <Text>Loading staff...</Text>;
+            return <StaffListSkeleton />;
         }
 
         if (isError) {

@@ -4,6 +4,7 @@ import { Button, HStack, Image, SimpleGrid, Text } from "@chakra-ui/react";
 import toast from "react-hot-toast";
 import Stacker from "../Stacker";
 import Dialog from "../Dialog";
+import { CardGridSkeleton, ImageCardSkeleton } from "../Skeletons";
 import { pendingBansQueryOptions } from "@/api-requests/bans/bans.queries";
 import approveBan from "@/api-requests/bans/approveBan";
 import deleteBan from "@/api-requests/bans/deleteBan";
@@ -56,7 +57,13 @@ const PendingBansTab = () => {
 
     const renderBans = () => {
         if (isPending) {
-            return <Text>Loading pending bans...</Text>;
+            return (
+                <CardGridSkeleton
+                    columns={[1, 2, null, 4]}
+                    count={4}
+                    card={<ImageCardSkeleton lines={5} />}
+                />
+            );
         }
 
         if (isError) {

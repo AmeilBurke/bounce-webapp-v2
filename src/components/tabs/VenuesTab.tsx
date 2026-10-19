@@ -5,6 +5,7 @@ import { venuesQueryOptions } from "@/api-requests/venues/venues.queries";
 import { useQuery } from "@tanstack/react-query";
 import { Text, SimpleGrid } from "@chakra-ui/react";
 import VenueCard from "../VenueCard";
+import { CardGridSkeleton, VenueCardSkeleton } from "../Skeletons";
 import FieldInput from "../FieldInput";
 import { useMemo, useState } from "react";
 import { userDetailsQueryOptions } from "@/api-requests/auth/user.queries";
@@ -24,7 +25,7 @@ const VenuesTab = () => {
 
     const renderVenues = () => {
         if (isPending) {
-            return <Text>Loading venues...</Text>;
+            return <CardGridSkeleton card={<VenueCardSkeleton />} />;
         }
 
         if (isError) {

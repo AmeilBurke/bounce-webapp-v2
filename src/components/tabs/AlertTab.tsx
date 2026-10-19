@@ -5,6 +5,7 @@ import { alertsQueryOptions } from "@/api-requests/alerts/alerts.queries";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Text, SimpleGrid, Button } from "@chakra-ui/react";
 import AlertCard from "../AlertCard";
+import { CardGridSkeleton, ImageCardSkeleton } from "../Skeletons";
 import { userDetailsQueryOptions } from "@/api-requests/auth/user.queries";
 import { useState } from "react";
 import Dialog from "../Dialog";
@@ -45,7 +46,7 @@ const AlertTab = () => {
 
     const renderAlerts = () => {
         if (isPending) {
-            return <Text>Loading alerts...</Text>;
+            return <CardGridSkeleton card={<ImageCardSkeleton />} />;
         }
 
         if (isError) {
