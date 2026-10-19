@@ -16,11 +16,6 @@ const CreateStaffForm = ({ control, errors }: CreateStaffFieldsProps) => {
     label: (role.charAt(0) + role.slice(1).toLowerCase()).replace("_", " "), // "VENUE_MANAGER" -> "Venue manager"
   }));
 
-  // name
-  // email
-  // password
-  // role
-
   return (
     <>
       <Controller

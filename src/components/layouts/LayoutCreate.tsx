@@ -15,7 +15,6 @@ type LayoutCreateProps = {
 // The back button sits near the top edge, like a navigation bar
 const RETURN_ARROW_TOP_PADDING = [2, null, null, 4];
 
-// need to finish styling for no image page
 const LayoutCreate = ({
     heading,
     subheading,

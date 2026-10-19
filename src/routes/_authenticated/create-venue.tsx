@@ -36,7 +36,6 @@ function RouteComponent() {
 
   const onCreateVenue = async (data: CreateVenueFormValues) => {
     const createVenueDto: CreateVenueDto = {
-      image: data.image[0],
       name: data.name,
       managers: data.managers,
     };

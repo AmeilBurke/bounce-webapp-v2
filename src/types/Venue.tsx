@@ -10,7 +10,6 @@ type VenueStaff = {
 export type Venue = {
     id: string;
     name: string;
-    imagePath: string;
     managers: VenueStaff[];
     dutyManagers: VenueStaff[];
 }

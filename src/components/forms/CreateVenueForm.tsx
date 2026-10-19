@@ -2,7 +2,6 @@ import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Controller, type Control, type FieldErrors } from "react-hook-form";
 import FieldInput from "@/components/FieldInput";
-import FieldImage from "@/components/FieldImage";
 import FieldMultiSelect from "@/components/FieldMultiSelect";
 import type { CreateVenueFormValues } from "@/schemas/create-venue.schema";
 import { staffQueryOptions } from "@/api-requests/staff/staff.queries";
@@ -33,21 +32,6 @@ const CreateVenueForm = ({ control, errors }: CreateVenueFieldsProps) => {
 
   return (
     <>
-      <Controller
-        name="image"
-        control={control}
-        render={({ field: { value, onChange } }) => (
-          <FieldImage
-            isRequired
-            label="Image"
-            accept="image/jpeg,image/png,image/webp"
-            value={value ?? []}
-            onChange={onChange}
-            error={errors.image?.message as string | undefined}
-          />
-        )}
-      />
-
       <Controller
         name="name"
         control={control}
