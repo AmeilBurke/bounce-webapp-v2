@@ -41,6 +41,15 @@ function AuthenticatedLayout() {
             queryClient.invalidateQueries({ queryKey: ["staff"] });
         };
 
+        const onVenueChange = () => {
+            queryClient.invalidateQueries({ queryKey: ["venues"] });
+        };
+
+        // Banned people are returned with their bans, so both events refresh the same list
+        const onBannedPeopleChange = () => {
+            queryClient.invalidateQueries({ queryKey: ["banned-people"] });
+        };
+
         const onStaffDelete = () => {
             toast.error("Your account has been deleted");
             localStorage.removeItem("jwt");
@@ -56,13 +65,19 @@ function AuthenticatedLayout() {
 
         socket.on("alert", onAlertChange);
         socket.on("staff", onStaffChange);
+        socket.on("venue", onVenueChange);
+        socket.on("ban", onBannedPeopleChange);
+        socket.on("bannedPerson", onBannedPeopleChange);
         socket.on("delete", onStaffDelete);
         socket.on("connect_error", onConnectError);
         socket.connect();
 
         return () => {
-            socket.off("alert_created", onAlertChange);
-            socket.off("alert_deleted", onStaffChange);
+            socket.off("alert", onAlertChange);
+            socket.off("staff", onStaffChange);
+            socket.off("venue", onVenueChange);
+            socket.off("ban", onBannedPeopleChange);
+            socket.off("bannedPerson", onBannedPeopleChange);
             socket.off("delete", onStaffDelete);
             socket.off("connect_error", onConnectError);
             socket.disconnect();

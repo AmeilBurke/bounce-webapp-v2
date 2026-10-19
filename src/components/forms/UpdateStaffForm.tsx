@@ -14,7 +14,7 @@ type UpdateStaffFieldsProps = {
 const UpdateStaffForm = ({ control, errors }: UpdateStaffFieldsProps) => {
     const roleOptions = Object.values(Role).map((role) => ({
         value: role,
-        label: role.charAt(0) + role.slice(1).toLowerCase(),
+        label: (role.charAt(0) + role.slice(1).toLowerCase()).replace("_", " "),
     }));
 
     const { data: user } = useQuery(userDetailsQueryOptions);

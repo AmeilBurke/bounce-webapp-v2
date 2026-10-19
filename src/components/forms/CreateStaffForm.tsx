@@ -13,7 +13,7 @@ const CreateStaffForm = ({ control, errors }: CreateStaffFieldsProps) => {
 
   const roleOptions = Object.values(Role).map((role) => ({
     value: role,
-    label: role.charAt(0) + role.slice(1).toLowerCase(), // "ADMIN" -> "Admin"
+    label: (role.charAt(0) + role.slice(1).toLowerCase()).replace("_", " "), // "VENUE_MANAGER" -> "Venue manager"
   }));
 
   // name

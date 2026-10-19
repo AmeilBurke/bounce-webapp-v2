@@ -6,14 +6,15 @@ type StackerProps = {
   direction: StackProps["direction"];
   children: ReactNode;
   padding?: StackProps["padding"];
+  paddingTop?: StackProps["paddingTop"];
   gap?: StackProps["gap"];
   align?: StackProps["align"];
   justify?: StackProps["justify"];
 };
 
-const Stacker = ({ direction, children, padding, gap = 8, align = "flex-start", justify = "flex-start" }: StackerProps) => {
+const Stacker = ({ direction, children, padding, paddingTop, gap = 8, align = "flex-start", justify = "flex-start" }: StackerProps) => {
   return (
-    <Stack direction={direction} w="full" p={padding} gap={gap} align={align} justify={justify}>
+    <Stack direction={direction} w="full" p={padding} pt={paddingTop} gap={gap} align={align} justify={justify}>
       {children}
     </Stack>
   );

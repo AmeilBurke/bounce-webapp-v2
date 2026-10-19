@@ -12,9 +12,11 @@ import { userDetailsQueryOptions } from "@/api-requests/auth/user.queries";
 import DialogBodyEdit from "../settings-tab/DialogBodyEdit";
 import DialogBodyView from "../settings-tab/DialogBodyView";
 
-const ROLE_ORDER: Role[] = [Role.ADMIN, Role.BOUNCER];
+const ROLE_ORDER: Role[] = [Role.ADMIN, Role.VENUE_MANAGER, Role.DUTY_MANAGER, Role.BOUNCER];
 const ROLE_LABELS: Record<Role, string> = {
     [Role.ADMIN]: "Admins",
+    [Role.VENUE_MANAGER]: "Venue Managers",
+    [Role.DUTY_MANAGER]: "Duty Managers",
     [Role.BOUNCER]: "Bouncers",
 };
 

@@ -12,6 +12,9 @@ type LayoutCreateProps = {
     imagePath?: string;
     returnArrow?: boolean;
 };
+// The back button sits near the top edge, like a navigation bar
+const RETURN_ARROW_TOP_PADDING = [2, null, null, 4];
+
 // need to finish styling for no image page
 const LayoutCreate = ({
     heading,
@@ -23,7 +26,11 @@ const LayoutCreate = ({
     if (imagePath) {
         return (
             <HStack>
-                <Stacker direction="column" padding={[8, null, null, 16]}>
+                <Stacker
+                    direction="column"
+                    padding={[8, null, null, 16]}
+                    paddingTop={returnArrow ? RETURN_ARROW_TOP_PADDING : undefined}
+                >
                     {returnArrow && <ReturnButton />}
                     <PageHeading heading={heading} subheading={subheading} />
                     {children}
@@ -35,7 +42,7 @@ const LayoutCreate = ({
         );
     } else {
         return (
-            <PageContainer>
+            <PageContainer props={returnArrow ? { pt: RETURN_ARROW_TOP_PADDING } : undefined}>
                 <Stacker direction="column">
                     {returnArrow && <ReturnButton />}
                     <PageHeading heading={heading} subheading={subheading} />

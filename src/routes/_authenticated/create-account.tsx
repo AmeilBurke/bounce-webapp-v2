@@ -59,7 +59,7 @@ function RouteComponent() {
                 return;
             }
 
-            await navigate({ to: "/" });
+            await navigate({ to: "/", search: { tab: "settings" } });
         } catch (err: unknown) {
             if (isAxiosError(err) && err.response?.status === 409) {
                 setError("email", {

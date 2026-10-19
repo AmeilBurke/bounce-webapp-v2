@@ -15,6 +15,10 @@ import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedCreateAccountRouteImport } from './routes/_authenticated/create-account'
 import { Route as AuthenticatedCreateAlertRouteImport } from './routes/_authenticated/create-alert'
+import { Route as AuthenticatedCreateBanRouteImport } from './routes/_authenticated/create-ban'
+import { Route as AuthenticatedCreateVenueRouteImport } from './routes/_authenticated/create-venue'
+import { Route as AuthenticatedVenuesVenueIdRouteImport } from './routes/_authenticated/venues.$venueId'
+import { Route as AuthenticatedVenuesVenueIdCreateBanRouteImport } from './routes/_authenticated/venues.$venueId_.create-ban'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -47,6 +51,29 @@ const AuthenticatedCreateAlertRoute =
     path: '/create-alert',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedCreateBanRoute = AuthenticatedCreateBanRouteImport.update({
+  id: '/create-ban',
+  path: '/create-ban',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedCreateVenueRoute =
+  AuthenticatedCreateVenueRouteImport.update({
+    id: '/create-venue',
+    path: '/create-venue',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedVenuesVenueIdRoute =
+  AuthenticatedVenuesVenueIdRouteImport.update({
+    id: '/venues/$venueId',
+    path: '/venues/$venueId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedVenuesVenueIdCreateBanRoute =
+  AuthenticatedVenuesVenueIdCreateBanRouteImport.update({
+    id: '/venues/$venueId_/create-ban',
+    path: '/venues/$venueId/create-ban',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -54,13 +81,21 @@ export interface FileRoutesByFullPath {
   '/sign-in': typeof SignInRoute
   '/create-account': typeof AuthenticatedCreateAccountRoute
   '/create-alert': typeof AuthenticatedCreateAlertRoute
+  '/create-ban': typeof AuthenticatedCreateBanRoute
+  '/create-venue': typeof AuthenticatedCreateVenueRoute
+  '/venues/$venueId': typeof AuthenticatedVenuesVenueIdRoute
+  '/venues/$venueId/create-ban': typeof AuthenticatedVenuesVenueIdCreateBanRoute
 }
 export interface FileRoutesByTo {
   '/setup': typeof SetupRoute
   '/sign-in': typeof SignInRoute
   '/create-account': typeof AuthenticatedCreateAccountRoute
   '/create-alert': typeof AuthenticatedCreateAlertRoute
+  '/create-ban': typeof AuthenticatedCreateBanRoute
+  '/create-venue': typeof AuthenticatedCreateVenueRoute
   '/': typeof AuthenticatedIndexRoute
+  '/venues/$venueId': typeof AuthenticatedVenuesVenueIdRoute
+  '/venues/$venueId/create-ban': typeof AuthenticatedVenuesVenueIdCreateBanRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -69,13 +104,35 @@ export interface FileRoutesById {
   '/sign-in': typeof SignInRoute
   '/_authenticated/create-account': typeof AuthenticatedCreateAccountRoute
   '/_authenticated/create-alert': typeof AuthenticatedCreateAlertRoute
+  '/_authenticated/create-ban': typeof AuthenticatedCreateBanRoute
+  '/_authenticated/create-venue': typeof AuthenticatedCreateVenueRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/venues/$venueId': typeof AuthenticatedVenuesVenueIdRoute
+  '/_authenticated/venues/$venueId_/create-ban': typeof AuthenticatedVenuesVenueIdCreateBanRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/setup' | '/sign-in' | '/create-account' | '/create-alert'
+  fullPaths:
+    | '/'
+    | '/setup'
+    | '/sign-in'
+    | '/create-account'
+    | '/create-alert'
+    | '/create-ban'
+    | '/create-venue'
+    | '/venues/$venueId'
+    | '/venues/$venueId/create-ban'
   fileRoutesByTo: FileRoutesByTo
-  to: '/setup' | '/sign-in' | '/create-account' | '/create-alert' | '/'
+  to:
+    | '/setup'
+    | '/sign-in'
+    | '/create-account'
+    | '/create-alert'
+    | '/create-ban'
+    | '/create-venue'
+    | '/'
+    | '/venues/$venueId'
+    | '/venues/$venueId/create-ban'
   id:
     | '__root__'
     | '/_authenticated'
@@ -83,7 +140,11 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/_authenticated/create-account'
     | '/_authenticated/create-alert'
+    | '/_authenticated/create-ban'
+    | '/_authenticated/create-venue'
     | '/_authenticated/'
+    | '/_authenticated/venues/$venueId'
+    | '/_authenticated/venues/$venueId_/create-ban'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -136,19 +197,56 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCreateAlertRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/create-ban': {
+      id: '/_authenticated/create-ban'
+      path: '/create-ban'
+      fullPath: '/create-ban'
+      preLoaderRoute: typeof AuthenticatedCreateBanRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/create-venue': {
+      id: '/_authenticated/create-venue'
+      path: '/create-venue'
+      fullPath: '/create-venue'
+      preLoaderRoute: typeof AuthenticatedCreateVenueRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/venues/$venueId': {
+      id: '/_authenticated/venues/$venueId'
+      path: '/venues/$venueId'
+      fullPath: '/venues/$venueId'
+      preLoaderRoute: typeof AuthenticatedVenuesVenueIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/venues/$venueId_/create-ban': {
+      id: '/_authenticated/venues/$venueId_/create-ban'
+      path: '/venues/$venueId/create-ban'
+      fullPath: '/venues/$venueId/create-ban'
+      preLoaderRoute: typeof AuthenticatedVenuesVenueIdCreateBanRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
 interface AuthenticatedRouteChildren {
   AuthenticatedCreateAccountRoute: typeof AuthenticatedCreateAccountRoute
   AuthenticatedCreateAlertRoute: typeof AuthenticatedCreateAlertRoute
+  AuthenticatedCreateBanRoute: typeof AuthenticatedCreateBanRoute
+  AuthenticatedCreateVenueRoute: typeof AuthenticatedCreateVenueRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedVenuesVenueIdRoute: typeof AuthenticatedVenuesVenueIdRoute
+  AuthenticatedVenuesVenueIdCreateBanRoute: typeof AuthenticatedVenuesVenueIdCreateBanRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedCreateAccountRoute: AuthenticatedCreateAccountRoute,
   AuthenticatedCreateAlertRoute: AuthenticatedCreateAlertRoute,
+  AuthenticatedCreateBanRoute: AuthenticatedCreateBanRoute,
+  AuthenticatedCreateVenueRoute: AuthenticatedCreateVenueRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedVenuesVenueIdRoute: AuthenticatedVenuesVenueIdRoute,
+  AuthenticatedVenuesVenueIdCreateBanRoute:
+    AuthenticatedVenuesVenueIdCreateBanRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
