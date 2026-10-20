@@ -8,6 +8,7 @@ import type { CreateAlertDto } from "@/types/dto/create-alert-dto";
 import { Button } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { refresh } from "@/utils/queries";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -44,7 +45,7 @@ function RouteComponent() {
       await createNewAlert(createAlertDto);
       toast.success("Alert Issued");
 
-      queryClient.invalidateQueries({ queryKey: ["alerts"] });
+      refresh(queryClient, ["alerts"]);
 
       await navigate({ to: "/" });
     } catch {

@@ -84,6 +84,7 @@ export const SkeletonImage = (props: ImageProps & { src: string }) => {
             <Image
                 {...props}
                 w="full"
+                loading="lazy"
                 onLoad={() => setLoadedSrc(props.src)}
                 // A broken image shouldn't pulse forever
                 onError={() => setLoadedSrc(props.src)}

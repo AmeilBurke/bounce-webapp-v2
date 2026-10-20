@@ -3,6 +3,7 @@ import CreateButton from "../CreateButton";
 import { useNavigate } from "@tanstack/react-router";
 import { alertsQueryOptions } from "@/api-requests/alerts/alerts.queries";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { refresh } from "@/utils/queries";
 import { Text, SimpleGrid, Button } from "@chakra-ui/react";
 import AlertCard from "../AlertCard";
 import { CardGridSkeleton, ImageCardSkeleton } from "../Skeletons";
@@ -32,7 +33,7 @@ const AlertTab = () => {
             setIsSubmitting(true);
             await deleteAlert(alertIdToDelete);
 
-            await queryClient.invalidateQueries({ queryKey: ["alerts"] });
+            await refresh(queryClient, ["alerts"]);
             toast.success("Alert Deleted");
 
             closeDialog();
@@ -46,7 +47,7 @@ const AlertTab = () => {
 
     const renderAlerts = () => {
         if (isPending) {
-            return <CardGridSkeleton card={<ImageCardSkeleton />} />;
+            return <CardGridSkeleton card={<ImageCardSkeleton lines={3} />} />;
         }
 
         if (isError) {

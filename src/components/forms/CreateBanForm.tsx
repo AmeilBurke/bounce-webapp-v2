@@ -8,7 +8,7 @@ import FieldSingleSelect from "@/components/FieldSingleSelect";
 import FieldMultiSelect from "@/components/FieldMultiSelect";
 import { FieldSkeleton } from "@/components/Skeletons";
 import { NEW_PERSON, type CreateBanFormValues } from "@/schemas/create-ban.schema";
-import { bannedPeopleQueryOptions } from "@/api-requests/banned-people/banned-people.queries";
+import { bannedPeopleNamesQueryOptions } from "@/api-requests/banned-people/banned-people.queries";
 import { venuesQueryOptions } from "@/api-requests/venues/venues.queries";
 
 type CreateBanFieldsProps = {
@@ -17,7 +17,7 @@ type CreateBanFieldsProps = {
 };
 
 const CreateBanForm = ({ control, errors }: CreateBanFieldsProps) => {
-  const { data: bannedPeople, isPending: isPeoplePending } = useQuery(bannedPeopleQueryOptions);
+  const { data: bannedPeople, isPending: isPeoplePending } = useQuery(bannedPeopleNamesQueryOptions);
   const { data: venues, isPending: isVenuesPending } = useQuery(venuesQueryOptions);
   const personId = useWatch({ control, name: "personId" });
   const startDate = useWatch({ control, name: "startDate" });

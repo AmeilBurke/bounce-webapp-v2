@@ -3,7 +3,7 @@ import { SignInSchema, type SignInFormValues } from '@/schemas/sign-in.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form';
-import signInImage from '../assets/sign-in.jpg'
+import signInImage from '../assets/sign-in.webp'
 import Stacker from '@/components/Stacker';
 import { Button } from '@chakra-ui/react';
 import Form from '@/components/Form';

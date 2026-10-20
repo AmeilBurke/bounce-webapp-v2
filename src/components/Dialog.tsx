@@ -24,6 +24,8 @@ const Dialog = ({
             onOpenChange={(e) => setIsOpen(e.open)}
             onExitComplete={onExitComplete}
             role="dialog"
+            // The body isn't built until the dialog is first opened
+            lazyMount
             placement="center"
             closeOnEscape
             closeOnInteractOutside

@@ -1,6 +1,7 @@
 import { Button, HStack } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { refresh } from "@/utils/queries";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import Form from "./Form";
@@ -53,7 +54,7 @@ const BanEdit = ({ ban, venueOptions, onDone }: BanEditProps) => {
         try {
             await updateBan(updateBanDto, ban.id);
             toast.success("Ban Updated");
-            await queryClient.invalidateQueries({ queryKey: ["banned-people"] });
+            await refresh(queryClient, ["banned-people"]);
             onDone();
         } catch {
             toast.error("Couldn't update ban");

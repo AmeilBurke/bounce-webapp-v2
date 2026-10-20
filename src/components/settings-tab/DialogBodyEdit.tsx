@@ -13,6 +13,7 @@ import {
 import UpdateStaffForm from "../forms/UpdateStaffForm";
 import type { UpdateStaffDto } from "@/types/dto/update-staff-dto";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { refresh } from "@/utils/queries";
 import Dialog from "../Dialog";
 import { useState } from "react";
 import deleteStaff from "@/api-requests/staff/deleteStaff";
@@ -70,7 +71,7 @@ const DialogBodyEdit = ({
     try {
       await editStaff(updateStaffDto, chosenStaff.id);
       toast.success("Details Updated");
-      await queryClient.invalidateQueries({ queryKey: ["staff"] });
+      await refresh(queryClient, ["staff"]);
       finish();
     } catch (err) {
       toast.error(
@@ -86,7 +87,7 @@ const DialogBodyEdit = ({
     try {
       const result = await deleteStaff(chosenStaff.id);
       toast.success(result);
-      await queryClient.invalidateQueries({ queryKey: ["staff"] });
+      await refresh(queryClient, ["staff"]);
       setIsDeleteDialogOpen(false);
       finish();
     } catch (err) {

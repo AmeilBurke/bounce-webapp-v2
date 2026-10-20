@@ -1,6 +1,7 @@
 import { Button, HStack } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { refresh } from "@/utils/queries";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import Form from "./Form";
@@ -38,7 +39,7 @@ const VenueManagersEdit = ({ venue, closeDialog }: VenueManagersEditProps) => {
         try {
             await updateVenue({ managers: data.managers, dutyManagers: data.dutyManagers }, venue.id);
             toast.success("Managers Updated");
-            await queryClient.invalidateQueries({ queryKey: ["venues"] });
+            await refresh(queryClient, ["venues"]);
             closeDialog();
         } catch {
             toast.error("Couldn't update managers");

@@ -8,6 +8,7 @@ import type { CreateStaffDto } from '@/types/dto/create-staff-dto'
 import { Button } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
+import { refresh } from '@/utils/queries'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { isAxiosError } from 'axios'
 import { useForm } from 'react-hook-form'
@@ -52,7 +53,7 @@ function RouteComponent() {
         try {
             await createNewStaff(createStaffDto);
             toast.success("Account Created");
-            queryClient.invalidateQueries({ queryKey: ["staff"] });
+            refresh(queryClient, ["staff"]);
 
             if (addAnother) {
                 reset();

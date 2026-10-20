@@ -6,6 +6,7 @@ import {
     useNavigate,
 } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
+import { refresh } from "@/utils/queries";
 import { userDetailsQueryOptions } from "@/api-requests/auth/user.queries";
 import { socket } from "@/socket";
 import toast from "react-hot-toast";
@@ -34,21 +35,22 @@ function AuthenticatedLayout() {
         // console.log("socket url:", import.meta.env.VITE_API_URL);
 
         const onAlertChange = () => {
-            queryClient.invalidateQueries({ queryKey: ["alerts"] });
+            refresh(queryClient, ["alerts"]);
         };
 
         const onStaffChange = () => {
-            queryClient.invalidateQueries({ queryKey: ["staff"] });
+            refresh(queryClient, ["staff"]);
         };
 
         const onVenueChange = () => {
-            queryClient.invalidateQueries({ queryKey: ["venues"] });
+            refresh(queryClient, ["venues"]);
         };
 
-        // Banned people are returned with their bans, so both events refresh the same list
+        // Banned people are returned with their bans, and pending bans with their person,
+        // so a change to either refreshes both
         const onBannedPeopleChange = () => {
-            queryClient.invalidateQueries({ queryKey: ["banned-people"] });
-            queryClient.invalidateQueries({ queryKey: ["bans"] });
+            refresh(queryClient, ["banned-people"]);
+            refresh(queryClient, ["bans"]);
         };
 
         const onStaffDelete = () => {

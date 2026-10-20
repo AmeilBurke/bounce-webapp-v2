@@ -11,6 +11,7 @@ import { endOfDayIso, startOfDayIso, toDateInputValue } from "@/utils/bans";
 import { Button } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { refresh } from "@/utils/queries";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -65,7 +66,7 @@ const CreateBanPage = ({ defaultVenueIds, subheading, onCreated }: CreateBanPage
       const ban = await createNewBan(createBanDto);
       toast.success(ban.isPending ? "Ban submitted for approval" : "Ban Created");
 
-      queryClient.invalidateQueries({ queryKey: ["banned-people"] });
+      refresh(queryClient, ["banned-people"]);
 
       await onCreated();
     } catch {

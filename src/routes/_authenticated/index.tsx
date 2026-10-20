@@ -56,6 +56,8 @@ function Index() {
                     subheading={`Welcome ${user?.name}`}
                 />
                 <Tabs.Root
+                    // Each tab only loads its data once it's first opened
+                    lazyMount
                     value={activeTab}
                     onValueChange={(e) => {
                         if (isTab(e.value)) navigate({ search: { tab: e.value }, replace: true });

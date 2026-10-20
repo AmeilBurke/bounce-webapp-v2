@@ -1,5 +1,5 @@
 import Stacker from "./Stacker";
-import { Text } from "@chakra-ui/react";
+import ClampedText from "./ClampedText";
 import { SkeletonImage } from "./Skeletons";
 import BanStatusBadge from "./BanStatusBadge";
 
@@ -21,7 +21,9 @@ const BannedPersonCard = ({ name, imagePath, isActive, onOpen }: BannedPersonCar
                 cursor="pointer"
                 onClick={onOpen}
             />
-            <Text fontWeight="medium">{name}</Text>
+            <ClampedText fontWeight="medium" lines={1}>
+                {name}
+            </ClampedText>
             <BanStatusBadge isActive={isActive} />
         </Stacker>
     );

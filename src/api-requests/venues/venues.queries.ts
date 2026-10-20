@@ -20,13 +20,3 @@ export const venueQueryOptions = (id: Venue["id"]) =>
         },
         staleTime: Infinity,
     });
-
-// Every venue's id, including ones hidden from the current user
-export const venueIdsQueryOptions = queryOptions({
-    queryKey: ["venues", "ids"] as const,
-    queryFn: async () => {
-        const { data } = await axiosInstance.get<Venue["id"][]>("/venues/ids");
-        return data;
-    },
-    staleTime: Infinity,
-});

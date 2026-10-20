@@ -12,7 +12,8 @@ import toast from "react-hot-toast";
 import getJwt from "@/api-requests/auth/getJwt";
 import Form from "@/components/Form";
 import { useQueryClient } from "@tanstack/react-query";
-import createAdminImage from "../assets/create-admin.png";
+import { refresh } from "@/utils/queries";
+import createAdminImage from "../assets/create-admin.webp";
 
 export const Route = createFileRoute("/setup")({
   component: RouteComponent,
@@ -54,7 +55,7 @@ function RouteComponent() {
 
       localStorage.setItem("jwt", jwt);
 
-      queryClient.invalidateQueries({ queryKey: ["setup-status"] });
+      refresh(queryClient, ["setup-status"]);
 
       await navigate({ to: "/" });
     } catch {

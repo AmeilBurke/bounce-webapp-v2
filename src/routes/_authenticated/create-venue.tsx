@@ -8,6 +8,7 @@ import type { CreateVenueDto } from "@/types/dto/create-venue-dto";
 import { Button } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { refresh } from "@/utils/queries";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -44,7 +45,7 @@ function RouteComponent() {
       await createNewVenue(createVenueDto);
       toast.success("Venue Created");
 
-      queryClient.invalidateQueries({ queryKey: ["venues"] });
+      refresh(queryClient, ["venues"]);
 
       await navigate({ to: "/", search: { tab: "venues" } });
     } catch {

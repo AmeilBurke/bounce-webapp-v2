@@ -20,21 +20,6 @@ export const canManageBan = (ban: Ban, user: Staff | undefined, managed: Set<Ven
 export const isBanActive = (ban: Ban, now = new Date()) =>
     !ban.isPending && new Date(ban.startDate) <= now && now < new Date(ban.endDate);
 
-// True when the person's active bans, taken together, cover every venue
-export const hasBlanketBan = (bans: Ban[], venueIds: Venue["id"][], now = new Date()) => {
-    if (venueIds.length === 0) return false;
-
-    const covered = new Set(
-        bans
-            .filter((ban) => isBanActive(ban, now))
-            .flatMap((ban) => ban.venueBans.map((venueBan) => venueBan.venueId)),
-    );
-    return venueIds.every((venueId) => covered.has(venueId));
-};
-
-export const isBanAtVenue =(ban: Ban, venueId: Venue["id"]) =>
-    ban.venueBans.some((venueBan) => venueBan.venueId === venueId);
-
 // Date inputs work in YYYY-MM-DD, read as a day in the user's own timezone
 const parseDateInput = (value: string) => {
     const [year, month, day] = value.split("-").map(Number);
@@ -55,6 +40,31 @@ export const endOfDayIso = (value: string) => {
     const date = parseDateInput(value);
     date.setHours(23, 59, 59, 999);
     return date.toISOString();
+};
+
+const DAY = 24 * 60 * 60 * 1000;
+
+// Whole calendar days from today, in the user's own timezone
+const daysFromToday = (date: string) => {
+    const day = new Date(date);
+    day.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return Math.round((day.getTime() - today.getTime()) / DAY);
+};
+
+export const describeBanStart = (date: string) => {
+    const days = daysFromToday(date);
+    if (days === 0) return "Today";
+    if (days === 1) return "Tomorrow";
+    if (days === -1) return "Yesterday";
+    return days > 1 ? `In ${days} days` : `${-days} days ago`;
+};
+
+// Bans run to the end of their last day, so this rounds to whole days
+export const describeBanLength = (startDate: string, endDate: string) => {
+    const days = Math.round((new Date(endDate).getTime() - new Date(startDate).getTime()) / DAY);
+    return days === 1 ? "1 day" : `${days} days`;
 };
 
 export const formatBanDate = (date: string) =>

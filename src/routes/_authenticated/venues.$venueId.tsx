@@ -1,5 +1,5 @@
 import { userDetailsQueryOptions } from "@/api-requests/auth/user.queries";
-import { bannedPeopleQueryOptions } from "@/api-requests/banned-people/banned-people.queries";
+import { bannedPeopleAtVenueQueryOptions } from "@/api-requests/banned-people/banned-people.queries";
 import { venueQueryOptions } from "@/api-requests/venues/venues.queries";
 import BannedPeopleSearch from "@/components/BannedPeopleSearch";
 import CreateButton from "@/components/CreateButton";
@@ -8,11 +8,10 @@ import LayoutCreate from "@/components/layouts/LayoutCreate";
 import Stacker from "@/components/Stacker";
 import VenueManagersEdit from "@/components/VenueManagersEdit";
 import { Role } from "@/types/Role";
-import { isBanAtVenue } from "@/utils/bans";
 import { Button, HStack, Skeleton, SkeletonText, Text } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { LuUsers } from "react-icons/lu";
 
 export const Route = createFileRoute("/_authenticated/venues/$venueId")({
@@ -24,20 +23,11 @@ function RouteComponent() {
   const navigate = useNavigate();
   const { data: venue, isError: isVenueError } = useQuery(venueQueryOptions(venueId));
   const { data: user } = useQuery(userDetailsQueryOptions);
-  const { data: bannedPeople, isPending, isError } = useQuery(bannedPeopleQueryOptions);
-  const [isManagersDialogOpen, setIsManagersDialogOpen] = useState<boolean>(false);
-
-  // Only approved bans at this venue count towards the list and its statuses
-  const peopleAtVenue = useMemo(
-    () =>
-      (bannedPeople ?? [])
-        .map((person) => ({
-          ...person,
-          bans: person.bans.filter((ban) => !ban.isPending && isBanAtVenue(ban, venueId)),
-        }))
-        .filter((person) => person.bans.length > 0),
-    [bannedPeople, venueId],
+  // Comes back with each person's bans already narrowed to this venue
+  const { data: peopleAtVenue, isPending, isError } = useQuery(
+    bannedPeopleAtVenueQueryOptions(venueId),
   );
+  const [isManagersDialogOpen, setIsManagersDialogOpen] = useState<boolean>(false);
 
   const managerNames = venue?.managers.map((m) => m.staff.name).join(", ");
   const dutyManagerNames = venue?.dutyManagers.map((m) => m.staff.name).join(", ");
@@ -95,7 +85,7 @@ function RouteComponent() {
         </HStack>
 
         <BannedPeopleSearch
-          people={peopleAtVenue}
+          people={peopleAtVenue ?? []}
           // The whole page loads together rather than the list showing before the venue
           isPending={isPending || !venue}
           isError={isError}
