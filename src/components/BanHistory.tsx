@@ -1,4 +1,4 @@
-import { HStack, IconButton, Separator, Text } from "@chakra-ui/react";
+import { HStack, IconButton, Separator, Skeleton, Text } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { Fragment, useMemo, useState } from "react";
 import { LuPencil } from "react-icons/lu";
@@ -17,7 +17,7 @@ type BanHistoryProps = {
 
 const BanHistory = ({ bans }: BanHistoryProps) => {
     const { data: user } = useQuery(userDetailsQueryOptions);
-    const { data: venues } = useQuery(venuesQueryOptions);
+    const { data: venues, isPending: isVenuesPending } = useQuery(venuesQueryOptions);
     const [editingBanId, setEditingBanId] = useState<Ban["id"] | undefined>(undefined);
 
     const managed = useMemo(() => managedVenueIds(user, venues), [user, venues]);
@@ -30,6 +30,10 @@ const BanHistory = ({ bans }: BanHistoryProps) => {
                 .map((venue) => ({ value: venue.id, label: venue.name })),
         [venues, user, managed],
     );
+
+    // Only roles that can edit bans wait on the venue list to know which ones they can edit
+    const isCheckingEditable =
+        isVenuesPending && (user?.role === Role.ADMIN || user?.role === Role.VENUE_MANAGER);
 
     if (bans.length === 0) {
         return <Text>No bans on record</Text>;
@@ -52,7 +56,8 @@ const BanHistory = ({ bans }: BanHistoryProps) => {
                                 <Text fontWeight="medium">{ban.reason}</Text>
                                 <HStack gap={1}>
                                     <BanStatusBadge isActive={isBanActive(ban)} />
-                                    {canManageBan(ban, user, managed) && (
+                                    {isCheckingEditable && <Skeleton boxSize="8" rounded="l2" />}
+                                    {!isCheckingEditable && canManageBan(ban, user, managed) && (
                                         <IconButton
                                             onClick={() => setEditingBanId(ban.id)}
                                             aria-label="Edit ban"

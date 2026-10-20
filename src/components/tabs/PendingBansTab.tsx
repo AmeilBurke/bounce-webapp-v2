@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, HStack, Image, SimpleGrid, Text } from "@chakra-ui/react";
+import { Button, HStack, SimpleGrid, Text } from "@chakra-ui/react";
 import toast from "react-hot-toast";
 import Stacker from "../Stacker";
 import Dialog from "../Dialog";
-import { CardGridSkeleton, ImageCardSkeleton } from "../Skeletons";
+import { CardGridSkeleton, ImageCardSkeleton, SkeletonImage } from "../Skeletons";
 import { pendingBansQueryOptions } from "@/api-requests/bans/bans.queries";
 import approveBan from "@/api-requests/bans/approveBan";
 import deleteBan from "@/api-requests/bans/deleteBan";
@@ -78,7 +78,7 @@ const PendingBansTab = () => {
             <SimpleGrid columns={[1, 2, null, 4]} columnGap={4} rowGap={8}>
                 {bans.map((ban) => (
                     <Stacker key={ban.id} direction="column" gap={2}>
-                        <Image
+                        <SkeletonImage
                             aspectRatio={1}
                             src={ban.bannedPerson.imagePath}
                             alt={ban.bannedPerson.name}

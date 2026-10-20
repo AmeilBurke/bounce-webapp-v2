@@ -1,5 +1,14 @@
-import { Card, SimpleGrid, Skeleton, SkeletonText, type SimpleGridProps } from "@chakra-ui/react";
-import type { ReactNode } from "react";
+import {
+    Card,
+    Field,
+    Image,
+    SimpleGrid,
+    Skeleton,
+    SkeletonText,
+    type ImageProps,
+    type SimpleGridProps,
+} from "@chakra-ui/react";
+import { useState, type ReactNode } from "react";
 import Stacker from "./Stacker";
 
 type CardGridSkeletonProps = {
@@ -51,5 +60,34 @@ export const StaffListSkeleton = () => {
                 </Stacker>
             ))}
         </Stacker>
+    );
+};
+
+// Stands in for a select whose options are still loading
+export const FieldSkeleton = ({ label, isRequired }: { label: string; isRequired?: boolean }) => {
+    return (
+        <Field.Root w="full" required={isRequired}>
+            <Field.Label>
+                {label} <Field.RequiredIndicator />
+            </Field.Label>
+            <Skeleton h="10" w="full" rounded="l2" />
+        </Field.Root>
+    );
+};
+
+// Pulses until the image has downloaded, and again whenever src changes
+export const SkeletonImage = (props: ImageProps & { src: string }) => {
+    const [loadedSrc, setLoadedSrc] = useState<string | undefined>(undefined);
+
+    return (
+        <Skeleton loading={loadedSrc !== props.src} w="full">
+            <Image
+                {...props}
+                w="full"
+                onLoad={() => setLoadedSrc(props.src)}
+                // A broken image shouldn't pulse forever
+                onError={() => setLoadedSrc(props.src)}
+            />
+        </Skeleton>
     );
 };

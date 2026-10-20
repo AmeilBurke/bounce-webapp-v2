@@ -2,9 +2,9 @@ import Stacker from "./Stacker";
 import {
     HStack,
     IconButton,
-    Image,
     Text,
 } from "@chakra-ui/react";
+import { SkeletonImage } from "./Skeletons";
 import { LuTrash2 } from "react-icons/lu";
 
 type AlertCardProps = {
@@ -17,7 +17,7 @@ type AlertCardProps = {
 const AlertCard = ({ imagePath, reason, isAdmin, onOpen }: AlertCardProps) => {
     return (
         <Stacker direction="column" gap={2} >
-            <Image aspectRatio={1} src={imagePath} objectFit="cover" />
+            <SkeletonImage aspectRatio={1} src={imagePath} objectFit="cover" />
             <HStack w="full" justify="space-between">
                 <Text>{reason}</Text>
 

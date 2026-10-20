@@ -1,5 +1,6 @@
 import Stacker from "./Stacker";
-import { Image, Text } from "@chakra-ui/react";
+import { Text } from "@chakra-ui/react";
+import { SkeletonImage } from "./Skeletons";
 import BanStatusBadge from "./BanStatusBadge";
 
 type BannedPersonCardProps = {
@@ -12,7 +13,7 @@ type BannedPersonCardProps = {
 const BannedPersonCard = ({ name, imagePath, isActive, onOpen }: BannedPersonCardProps) => {
     return (
         <Stacker direction="column" gap={2}>
-            <Image
+            <SkeletonImage
                 aspectRatio={1}
                 src={imagePath}
                 alt={name}

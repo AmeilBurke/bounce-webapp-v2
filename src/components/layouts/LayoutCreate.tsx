@@ -6,8 +6,8 @@ import { HStack, Image } from "@chakra-ui/react";
 import ReturnButton from "../ReturnButton";
 
 type LayoutCreateProps = {
-    heading: string;
-    subheading: string;
+    heading: string | undefined;
+    subheading: string | undefined;
     children: ReactNode;
     imagePath?: string;
     returnArrow?: boolean;

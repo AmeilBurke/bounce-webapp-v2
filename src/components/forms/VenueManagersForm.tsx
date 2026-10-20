@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Controller, type Control, type FieldErrors } from "react-hook-form";
 import FieldMultiSelect from "@/components/FieldMultiSelect";
+import { FieldSkeleton } from "@/components/Skeletons";
 import type { UpdateVenueManagersFormValues } from "@/schemas/update-venue-managers.schema";
 import { staffQueryOptions } from "@/api-requests/staff/staff.queries";
 import { Role } from "@/types/Role";
@@ -12,7 +13,7 @@ type VenueManagersFieldsProps = {
 };
 
 const VenueManagersForm = ({ control, errors }: VenueManagersFieldsProps) => {
-  const { data: staff } = useQuery(staffQueryOptions);
+  const { data: staff, isPending } = useQuery(staffQueryOptions);
 
   const managerOptions = useMemo(
     () =>
@@ -30,6 +31,15 @@ const VenueManagersForm = ({ control, errors }: VenueManagersFieldsProps) => {
         .map((s) => ({ value: s.id, label: s.name })),
     [staff],
   );
+
+  if (isPending) {
+    return (
+      <>
+        <FieldSkeleton label="Venue Managers" />
+        <FieldSkeleton label="Duty Managers" />
+      </>
+    );
+  }
 
   return (
     <>

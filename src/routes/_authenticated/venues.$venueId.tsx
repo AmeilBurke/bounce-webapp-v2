@@ -9,7 +9,7 @@ import Stacker from "@/components/Stacker";
 import VenueManagersEdit from "@/components/VenueManagersEdit";
 import { Role } from "@/types/Role";
 import { isBanAtVenue } from "@/utils/bans";
-import { Button, HStack, SkeletonText, Text } from "@chakra-ui/react";
+import { Button, HStack, Skeleton, SkeletonText, Text } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
@@ -57,8 +57,8 @@ function RouteComponent() {
 
   return (
     <LayoutCreate
-      heading={venue?.name ?? "Venue"}
-      subheading={"People banned from this venue"}
+      heading={venue?.name}
+      subheading={venue ? "People banned from this venue" : undefined}
       returnArrow
     >
       <Stacker direction={"column"}>
@@ -72,23 +72,32 @@ function RouteComponent() {
         )}
 
         <HStack gap={2} wrap="wrap">
-          <CreateButton
-            text="Create New Ban"
-            onClick={async () =>
-              await navigate({ to: "/venues/$venueId/create-ban", params: { venueId } })
-            }
-          />
+          <Skeleton loading={!venue} rounded="l2">
+            <CreateButton
+              text="Create New Ban"
+              onClick={async () =>
+                await navigate({ to: "/venues/$venueId/create-ban", params: { venueId } })
+              }
+            />
+          </Skeleton>
 
-          {user?.role === Role.ADMIN && venue && (
-            <Button variant="outline" onClick={() => setIsManagersDialogOpen(true)}>
-              Edit Managers <LuUsers />
-            </Button>
+          {user?.role === Role.ADMIN && (
+            <Skeleton loading={!venue} rounded="l2">
+              <Button
+                variant="outline"
+                onClick={() => setIsManagersDialogOpen(true)}
+                disabled={!venue}
+              >
+                Edit Managers <LuUsers />
+              </Button>
+            </Skeleton>
           )}
         </HStack>
 
         <BannedPeopleSearch
           people={peopleAtVenue}
-          isPending={isPending}
+          // The whole page loads together rather than the list showing before the venue
+          isPending={isPending || !venue}
           isError={isError}
           emptyText="No one has been banned from this venue"
         />

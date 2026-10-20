@@ -10,6 +10,7 @@ import Form from '@/components/Form';
 import SignInForm from '@/components/forms/SignInForm';
 import toast from 'react-hot-toast';
 import getJwt from '@/api-requests/auth/getJwt';
+import { isAxiosError } from 'axios';
 
 export const Route = createFileRoute('/sign-in')({
   component: RouteComponent,
@@ -43,8 +44,11 @@ function RouteComponent() {
 
       await navigate({ to: "/" });
     } catch (error: unknown) {
-      //test this
-      toast.error(String(error));
+      if (isAxiosError(error) && error.response?.status === 401) {
+        toast.error("Invalid email or password");
+      } else {
+        toast.error("Couldn't sign in");
+      }
 
       setError("root.serverError", {
         type: "server",

@@ -6,6 +6,7 @@ import FieldImage from "@/components/FieldImage";
 import FieldDate from "@/components/FieldDate";
 import FieldSingleSelect from "@/components/FieldSingleSelect";
 import FieldMultiSelect from "@/components/FieldMultiSelect";
+import { FieldSkeleton } from "@/components/Skeletons";
 import { NEW_PERSON, type CreateBanFormValues } from "@/schemas/create-ban.schema";
 import { bannedPeopleQueryOptions } from "@/api-requests/banned-people/banned-people.queries";
 import { venuesQueryOptions } from "@/api-requests/venues/venues.queries";
@@ -16,8 +17,8 @@ type CreateBanFieldsProps = {
 };
 
 const CreateBanForm = ({ control, errors }: CreateBanFieldsProps) => {
-  const { data: bannedPeople } = useQuery(bannedPeopleQueryOptions);
-  const { data: venues } = useQuery(venuesQueryOptions);
+  const { data: bannedPeople, isPending: isPeoplePending } = useQuery(bannedPeopleQueryOptions);
+  const { data: venues, isPending: isVenuesPending } = useQuery(venuesQueryOptions);
   const personId = useWatch({ control, name: "personId" });
   const startDate = useWatch({ control, name: "startDate" });
 
@@ -36,22 +37,26 @@ const CreateBanForm = ({ control, errors }: CreateBanFieldsProps) => {
 
   return (
     <>
-      <Controller
-        control={control}
-        name="personId"
-        render={({ field }) => (
-          <FieldSingleSelect
-            label="Person"
-            placeholder="Choose a person or add a new one"
-            options={personOptions}
-            value={field.value}
-            onChange={field.onChange}
-            onBlur={field.onBlur}
-            isRequired
-            error={errors.personId?.message}
-          />
-        )}
-      />
+      {isPeoplePending ? (
+        <FieldSkeleton label="Person" isRequired />
+      ) : (
+        <Controller
+          control={control}
+          name="personId"
+          render={({ field }) => (
+            <FieldSingleSelect
+              label="Person"
+              placeholder="Choose a person or add a new one"
+              options={personOptions}
+              value={field.value}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              isRequired
+              error={errors.personId?.message}
+            />
+          )}
+        />
+      )}
 
       {personId === NEW_PERSON && (
         <>
@@ -135,22 +140,27 @@ const CreateBanForm = ({ control, errors }: CreateBanFieldsProps) => {
         )}
       />
 
-      <Controller
-        name="venueIds"
-        control={control}
-        render={({ field }) => (
-          <FieldMultiSelect
-            isRequired
-            label="Venues"
-            placeholder="Select venues"
-            options={venueOptions}
-            value={field.value ?? []}
-            onChange={field.onChange}
-            onBlur={field.onBlur}
-            error={errors.venueIds?.message}
-          />
-        )}
-      />
+      {isVenuesPending ? (
+        <FieldSkeleton label="Venues" isRequired />
+      ) : (
+        <Controller
+          name="venueIds"
+          control={control}
+          render={({ field }) => (
+            <FieldMultiSelect
+              isRequired
+              label="Venues"
+              placeholder="Select venues"
+              options={venueOptions}
+              selectAll
+              value={field.value ?? []}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              error={errors.venueIds?.message}
+            />
+          )}
+        />
+      )}
     </>
   );
 };

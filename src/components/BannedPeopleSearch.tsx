@@ -1,4 +1,4 @@
-import { SimpleGrid, Text } from "@chakra-ui/react";
+import { SimpleGrid, Skeleton, Text } from "@chakra-ui/react";
 import { useMemo, useState } from "react";
 import BanHistory from "./BanHistory";
 import BannedPersonCard from "./BannedPersonCard";
@@ -70,12 +70,14 @@ const BannedPeopleSearch = ({ people, isPending, isError, emptyText }: BannedPeo
 
     return (
         <Stacker direction={"column"}>
-            <FieldInput
-                label="Search"
-                value={search}
-                onChange={setSearch}
-                placeholder="Search by name"
-            />
+            <Skeleton loading={isPending} w="full">
+                <FieldInput
+                    label="Search"
+                    value={search}
+                    onChange={setSearch}
+                    placeholder="Search by name"
+                />
+            </Skeleton>
 
             {renderPeople()}
 
