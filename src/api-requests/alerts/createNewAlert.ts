@@ -5,7 +5,8 @@ import type { Alert } from "@/types/Alert";
 
 const createNewAlert = async (createAlertDto: CreateAlertDto): Promise<Alert> => {
     const formData = new FormData();
-    formData.append("image", createAlertDto.image);
+    if (createAlertDto.image) formData.append("image", createAlertDto.image);
+    if (createAlertDto.bannedPersonId) formData.append("bannedPersonId", createAlertDto.bannedPersonId);
     formData.append("reason", createAlertDto.reason);
 
     try {

@@ -8,7 +8,7 @@ import { CreateBanSchema, NEW_PERSON, type CreateBanFormValues } from "@/schemas
 import type { CreateBanDto } from "@/types/dto/create-ban-dto";
 import type { Venue } from "@/types/Venue";
 import { endOfDayIso, startOfDayIso, toDateInputValue } from "@/utils/bans";
-import { Button } from "@chakra-ui/react";
+import { Button, Stack } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { refresh } from "@/utils/queries";
@@ -23,28 +23,33 @@ type CreateBanPageProps = {
 };
 
 const CreateBanPage = ({ defaultVenueIds, subheading, onCreated }: CreateBanPageProps) => {
+  const defaultValues = () => ({
+    personId: "",
+    startDate: toDateInputValue(new Date()),
+    endDate: "",
+    venueIds: defaultVenueIds,
+  });
+
   const {
     control,
     handleSubmit,
     setError,
+    reset,
     formState: { errors, isValid, isSubmitting },
   } = useForm<CreateBanFormValues>({
     resolver: zodResolver(CreateBanSchema),
     mode: "onChange",
-    defaultValues: {
-      personId: "",
-      startDate: toDateInputValue(new Date()),
-      endDate: "",
-      venueIds: defaultVenueIds,
-    },
+    defaultValues: defaultValues(),
   });
 
   const queryClient = useQueryClient();
 
   // Keeps a newly added person if the ban itself fails, so retrying doesn't add them twice
   const [createdPersonId, setCreatedPersonId] = useState<string | undefined>(undefined);
+  // Which button was pressed, so only that one shows it's loading
+  const [isAddingAnother, setIsAddingAnother] = useState<boolean>(false);
 
-  const onCreateBan = async (data: CreateBanFormValues) => {
+  const onCreateBan = async (data: CreateBanFormValues, addAnother: boolean) => {
     try {
       let bannedPersonId = data.personId;
 
@@ -68,7 +73,13 @@ const CreateBanPage = ({ defaultVenueIds, subheading, onCreated }: CreateBanPage
 
       refresh(queryClient, ["banned-people"]);
 
-      await onCreated();
+      if (addAnother) {
+        // The next ban starts from a blank form, and may be for a different new person
+        setCreatedPersonId(undefined);
+        reset(defaultValues());
+      } else {
+        await onCreated();
+      }
     } catch {
       toast.error("Couldn't create ban");
       setError("root.serverError", {
@@ -87,18 +98,35 @@ const CreateBanPage = ({ defaultVenueIds, subheading, onCreated }: CreateBanPage
     >
 
       <Stacker direction={"column"}>
-        <Form w="full" onSubmit={handleSubmit(onCreateBan)}>
+        <Form w="full" maxW="3xl" bg="bg.panel" borderWidth="1px" rounded="xl" p={[4, null, 6]} onSubmit={handleSubmit((data) => onCreateBan(data, false))}>
           <Stacker direction="column">
             <CreateBanForm control={control} errors={errors} />
-            <Button
+            <Stack
+              direction={["column-reverse", null, null, "row"]}
               w={["full", null, null, "auto"]}
-              type="submit"
               alignSelf={"flex-end"}
-              disabled={!isValid}
-              loading={isSubmitting}
+              gap={2}
             >
-              Create Ban
-            </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setIsAddingAnother(true);
+                  return handleSubmit((data) => onCreateBan(data, true))();
+                }}
+                disabled={!isValid || isSubmitting}
+                loading={isSubmitting && isAddingAnother}
+              >
+                Create & Add Another
+              </Button>
+              <Button
+                type="submit"
+                onClick={() => setIsAddingAnother(false)}
+                disabled={!isValid || isSubmitting}
+                loading={isSubmitting && !isAddingAnother}
+              >
+                Create Ban
+              </Button>
+            </Stack>
           </Stacker>
         </Form>
       </Stacker>

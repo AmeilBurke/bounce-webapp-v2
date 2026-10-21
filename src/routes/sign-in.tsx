@@ -64,7 +64,7 @@ function RouteComponent() {
       subheading='Enter your details below to sign in & use the app'
       imagePath={signInImage}
     >
-      <Form w="full" onSubmit={handleSubmit(onSignIn)}>
+      <Form w="full" maxW="3xl" bg="bg.panel" borderWidth="1px" rounded="xl" p={[4, null, 6]} onSubmit={handleSubmit(onSignIn)}>
         <Stacker direction="column">
           <SignInForm control={control} errors={errors} />
           <Button

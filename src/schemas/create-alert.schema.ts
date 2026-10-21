@@ -1,16 +1,28 @@
 import { z } from "zod";
 
-export const CreateAlertSchema = z.object({
-  image: z
-    .array(z.instanceof(File))
-    .min(1, "Photo is required")
-    .refine((files) => files[0]?.size <= 5 * 1024 * 1024, "File must be under 5MB")
-    .refine(
-      (files) => ["image/jpeg", "image/png", "image/webp"].includes(files[0]?.type),
-      "Only JPEG, PNG, or WEBP allowed"
-    ),
-  reason: z.string().min(1, "Reason is required"),
-  personId: z.number().optional(),
-});
+// personId value meaning the alert is about someone new, so it needs its own photo
+export const NEW_PERSON = "new";
+
+const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+export const CreateAlertSchema = z
+  .object({
+    personId: z.string().min(1, "Choose a person"),
+    image: z.array(z.instanceof(File)).optional(),
+    reason: z.string().min(1, "Reason is required"),
+  })
+  .superRefine((values, ctx) => {
+    // Alerts about someone previously banned reuse their photo
+    if (values.personId !== NEW_PERSON) return;
+
+    const file = values.image?.[0];
+    if (!file) {
+      ctx.addIssue({ code: "custom", path: ["image"], message: "Photo is required" });
+    } else if (file.size > 5 * 1024 * 1024) {
+      ctx.addIssue({ code: "custom", path: ["image"], message: "File must be under 5MB" });
+    } else if (!IMAGE_TYPES.includes(file.type)) {
+      ctx.addIssue({ code: "custom", path: ["image"], message: "Only JPEG, PNG, or WEBP allowed" });
+    }
+  });
 
 export type CreateAlertFormValues = z.infer<typeof CreateAlertSchema>;

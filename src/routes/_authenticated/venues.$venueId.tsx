@@ -8,7 +8,8 @@ import LayoutCreate from "@/components/layouts/LayoutCreate";
 import Stacker from "@/components/Stacker";
 import VenueManagersEdit from "@/components/VenueManagersEdit";
 import { Role } from "@/types/Role";
-import { Button, HStack, Skeleton, SkeletonText, Text } from "@chakra-ui/react";
+import Panel from "@/components/Panel";
+import { Button, HStack, SimpleGrid, Skeleton, SkeletonText, Text } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
@@ -52,19 +53,30 @@ function RouteComponent() {
       returnArrow
     >
       <Stacker direction={"column"}>
-        {venue ? (
-          <Stacker direction={"column"} gap={1}>
-            <Text color="fg.muted">Venue managers: {managerNames || "None"}</Text>
-            <Text color="fg.muted">Duty managers: {dutyManagerNames || "None"}</Text>
-          </Stacker>
-        ) : (
-          <SkeletonText noOfLines={2} maxW="sm" />
-        )}
+        <SimpleGrid columns={[1, 2]} gap={3} w="full" maxW="3xl">
+          {[
+            { label: "Venue managers", names: managerNames },
+            { label: "Duty managers", names: dutyManagerNames },
+          ].map(({ label, names }) => (
+            <Panel key={label} p={4}>
+              <Text color="fg.muted" fontSize="sm">
+                {label}
+              </Text>
+              {venue ? (
+                <Text fontWeight="semibold" mt={1} overflowWrap="anywhere">
+                  {names || "None"}
+                </Text>
+              ) : (
+                <SkeletonText noOfLines={1} mt={2} />
+              )}
+            </Panel>
+          ))}
+        </SimpleGrid>
 
         <HStack gap={2} wrap="wrap">
           <Skeleton loading={!venue} rounded="l2">
             <CreateButton
-              text="Create New Ban"
+              text="New Ban"
               onClick={async () =>
                 await navigate({ to: "/venues/$venueId/create-ban", params: { venueId } })
               }
@@ -74,11 +86,13 @@ function RouteComponent() {
           {user?.role === Role.ADMIN && (
             <Skeleton loading={!venue} rounded="l2">
               <Button
+                size="sm"
                 variant="outline"
+                bg="bg.panel"
                 onClick={() => setIsManagersDialogOpen(true)}
                 disabled={!venue}
               >
-                Edit Managers <LuUsers />
+                <LuUsers /> Edit Managers
               </Button>
             </Skeleton>
           )}

@@ -52,7 +52,7 @@ const FieldDate = ({
                 closeOnSelect
             >
                 <DatePicker.Control>
-                    <DatePicker.Input placeholder={placeholder} />
+                    <DatePicker.Input placeholder={placeholder} bg="bg.panel" />
                     <DatePicker.IndicatorGroup>
                         <DatePicker.Trigger>
                             <LuCalendar />

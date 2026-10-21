@@ -1,11 +1,13 @@
-import { SimpleGrid, Skeleton, Text } from "@chakra-ui/react";
+import { SimpleGrid, Skeleton } from "@chakra-ui/react";
 import { useMemo, useState } from "react";
 import BanHistory from "./BanHistory";
 import BannedPersonCard from "./BannedPersonCard";
 import Dialog from "./Dialog";
+import EmptyMessage from "./EmptyMessage";
 import FieldInput from "./FieldInput";
+import SectionLabel from "./SectionLabel";
 import Stacker from "./Stacker";
-import { CardGridSkeleton, ImageCardSkeleton } from "./Skeletons";
+import { CARD_GRID_COLUMNS, CardGridSkeleton, ImageCardSkeleton } from "./Skeletons";
 import type { BannedPerson } from "@/types/BannedPerson";
 import { isBanActive } from "@/utils/bans";
 
@@ -15,9 +17,11 @@ type BannedPeopleSearchProps = {
     isPending: boolean;
     isError: boolean;
     emptyText: string;
+    // Off on the blanket bans list, where everyone is banned from every venue anyway
+    showVenues?: boolean;
 };
 
-const BannedPeopleSearch = ({ people, isPending, isError, emptyText }: BannedPeopleSearchProps) => {
+const BannedPeopleSearch = ({ people, isPending, isError, emptyText, showVenues }: BannedPeopleSearchProps) => {
     const [search, setSearch] = useState("");
     const [chosenPersonId, setChosenPersonId] = useState<BannedPerson["id"] | undefined>(undefined);
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
@@ -38,23 +42,23 @@ const BannedPeopleSearch = ({ people, isPending, isError, emptyText }: BannedPeo
 
     const renderPeople = () => {
         if (isPending) {
-            return <CardGridSkeleton card={<ImageCardSkeleton lines={2} />} />;
+            return <CardGridSkeleton card={<ImageCardSkeleton lines={1} />} />;
         }
 
         if (isError) {
-            return <Text>Couldn't load banned people</Text>;
+            return <EmptyMessage kind="error" title="Couldn't load banned people" />;
         }
 
         if (people.length === 0) {
-            return <Text>{emptyText}</Text>;
+            return <EmptyMessage title={emptyText} />;
         }
 
         if (filteredPeople.length === 0) {
-            return <Text>No banned people match "{search.trim()}"</Text>;
+            return <EmptyMessage kind="search" title={`No one matches "${search.trim()}"`} />;
         }
 
         return (
-            <SimpleGrid columns={[2, null, null, 4]} columnGap={4} rowGap={8} w="full">
+            <SimpleGrid columns={CARD_GRID_COLUMNS} gap={3} w="full">
                 {filteredPeople.map((person) => (
                     <BannedPersonCard
                         key={person.id}
@@ -69,24 +73,32 @@ const BannedPeopleSearch = ({ people, isPending, isError, emptyText }: BannedPeo
     };
 
     return (
-        <Stacker direction={"column"}>
-            <Skeleton loading={isPending} w="full">
+        <Stacker direction={"column"} gap={6}>
+            <Skeleton loading={isPending} w="full" rounded="l2">
                 <FieldInput
                     label="Search"
                     value={search}
                     onChange={setSearch}
                     placeholder="Search by name"
+                    isSearch
                 />
             </Skeleton>
 
-            {renderPeople()}
+            <Stacker direction={"column"} gap={3}>
+                <SectionLabel>
+                    {isPending || isError
+                        ? "People"
+                        : `${filteredPeople.length} ${filteredPeople.length === 1 ? "person" : "people"}`}
+                </SectionLabel>
+                {renderPeople()}
+            </Stacker>
 
             <Dialog
                 isOpen={isDialogOpen}
                 setIsOpen={setIsDialogOpen}
                 onExitComplete={() => setChosenPersonId(undefined)}
                 title={`Ban History For ${chosenPerson?.name ?? ""}`}
-                body={<BanHistory bans={chosenPerson?.bans ?? []} />}
+                body={<BanHistory bans={chosenPerson?.bans ?? []} showVenues={showVenues} />}
             />
         </Stacker>
     );

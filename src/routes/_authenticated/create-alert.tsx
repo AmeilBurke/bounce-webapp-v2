@@ -3,13 +3,14 @@ import Form from "@/components/Form";
 import CreateAlertForm from "@/components/forms/CreateAlertForm";
 import LayoutCreate from "@/components/layouts/LayoutCreate";
 import Stacker from "@/components/Stacker";
-import { CreateAlertSchema, type CreateAlertFormValues } from "@/schemas/create-alert.schema";
+import { CreateAlertSchema, NEW_PERSON, type CreateAlertFormValues } from "@/schemas/create-alert.schema";
 import type { CreateAlertDto } from "@/types/dto/create-alert-dto";
 import { Button } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { refresh } from "@/utils/queries";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { isAxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
@@ -28,7 +29,7 @@ function RouteComponent() {
     resolver: zodResolver(CreateAlertSchema),
     mode: "onChange",
     defaultValues: {
-
+      personId: NEW_PERSON,
     },
   });
 
@@ -36,10 +37,10 @@ function RouteComponent() {
   const queryClient = useQueryClient();
 
   const onCreateAlert = async (data: CreateAlertFormValues) => {
-    const createAlertDto: CreateAlertDto = {
-      image: data.image[0],
-      reason: data.reason,
-    };
+    const createAlertDto: CreateAlertDto =
+      data.personId === NEW_PERSON
+        ? { image: data.image![0], reason: data.reason }
+        : { bannedPersonId: data.personId, reason: data.reason };
 
     try {
       await createNewAlert(createAlertDto);
@@ -48,10 +49,15 @@ function RouteComponent() {
       refresh(queryClient, ["alerts"]);
 
       await navigate({ to: "/" });
-    } catch {
+    } catch (err) {
+      // The API allows one alert per banned person
+      const isDuplicate = isAxiosError(err) && err.response?.status === 409;
+      toast.error(isDuplicate ? "This person already has an alert" : "Couldn't create alert");
       setError("root.serverError", {
         type: "server",
-        message: "Something went wrong. Please try again.",
+        message: isDuplicate
+          ? "This person already has an alert."
+          : "Something went wrong. Please try again.",
       });
     }
   };
@@ -65,7 +71,7 @@ function RouteComponent() {
     >
 
       <Stacker direction={"column"}>
-        <Form w="full" onSubmit={handleSubmit(onCreateAlert)}>
+        <Form w="full" maxW="3xl" bg="bg.panel" borderWidth="1px" rounded="xl" p={[4, null, 6]} onSubmit={handleSubmit(onCreateAlert)}>
           <Stacker direction="column">
             <CreateAlertForm control={control} errors={errors} />
             <Button

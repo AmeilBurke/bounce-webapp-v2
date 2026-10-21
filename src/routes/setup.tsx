@@ -72,7 +72,7 @@ function RouteComponent() {
       subheading="Create a admin account"
       imagePath={createAdminImage}
     >
-      <Form w="full" onSubmit={handleSubmit(onCreateAdmin)}>
+      <Form w="full" maxW="3xl" bg="bg.panel" borderWidth="1px" rounded="xl" p={[4, null, 6]} onSubmit={handleSubmit(onCreateAdmin)}>
         <Stacker direction="column">
           <SetupForm control={control} errors={errors} />
           <Button

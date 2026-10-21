@@ -65,7 +65,7 @@ function RouteComponent() {
     >
 
       <Stacker direction={"column"}>
-        <Form w="full" onSubmit={handleSubmit(onCreateVenue)}>
+        <Form w="full" maxW="3xl" bg="bg.panel" borderWidth="1px" rounded="xl" p={[4, null, 6]} onSubmit={handleSubmit(onCreateVenue)}>
           <Stacker direction="column">
             <CreateVenueForm control={control} errors={errors} />
             <Button

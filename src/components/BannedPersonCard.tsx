@@ -1,5 +1,5 @@
-import Stacker from "./Stacker";
-import ClampedText from "./ClampedText";
+import { Box, HStack, Text } from "@chakra-ui/react";
+import Panel from "./Panel";
 import { SkeletonImage } from "./Skeletons";
 import BanStatusBadge from "./BanStatusBadge";
 
@@ -12,20 +12,19 @@ type BannedPersonCardProps = {
 
 const BannedPersonCard = ({ name, imagePath, isActive, onOpen }: BannedPersonCardProps) => {
     return (
-        <Stacker direction="column" gap={2}>
-            <SkeletonImage
-                aspectRatio={1}
-                src={imagePath}
-                alt={name}
-                objectFit="cover"
-                cursor="pointer"
-                onClick={onOpen}
-            />
-            <ClampedText fontWeight="medium" lines={1}>
-                {name}
-            </ClampedText>
-            <BanStatusBadge isActive={isActive} />
-        </Stacker>
+        <Panel asChild isClickable h="full" overflow="hidden" textAlign="start" display="flex" flexDirection="column">
+            <button type="button" onClick={onOpen} aria-label={`Ban history for ${name}`}>
+                <Box borderBottomWidth="1px" w="full">
+                    <SkeletonImage aspectRatio={1} src={imagePath} alt={name} objectFit="cover" />
+                </Box>
+                <HStack flex={1} w="full" p={3} justify="space-between" align="flex-start" gap={2}>
+                    <Text fontWeight="semibold" fontSize="sm" overflowWrap="anywhere">
+                        {name}
+                    </Text>
+                    <BanStatusBadge isActive={isActive} />
+                </HStack>
+            </button>
+        </Panel>
     );
 };
 

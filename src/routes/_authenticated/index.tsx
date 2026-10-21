@@ -16,19 +16,15 @@ import BlanketBansTab from "@/components/tabs/BlanketBansTab";
 import PendingBansTab from "@/components/tabs/PendingBansTab";
 import PageContainer from "@/components/PageContainer";
 import { Role } from "@/types/Role";
+import StatusPill from "@/components/StatusPill";
+import useSocketConnected from "@/hooks/useSocketConnected";
 
-const TAB_LABELS = {
-    alerts: "alerts",
-    venues: "venues",
-    "blanket-bans": "blanket bans",
-    "pending-bans": "pending bans",
-    settings: "settings",
-} as const;
+const TABS = ["alerts", "venues", "blanket-bans", "pending-bans", "settings"] as const;
 
-type Tab = keyof typeof TAB_LABELS;
+type Tab = (typeof TABS)[number];
 
 const isTab = (value: unknown): value is Tab =>
-    typeof value === "string" && value in TAB_LABELS;
+    typeof value === "string" && (TABS as readonly string[]).includes(value);
 
 // The open tab lives in the URL so returning to the dashboard lands back on it
 export const Route = createFileRoute("/_authenticated/")({
@@ -46,14 +42,21 @@ function Index() {
     // Pending bans are admin only, so anyone else linked there lands on alerts
     const activeTab: Tab =
         tab === undefined || (tab === "pending-bans" && !isAdmin) ? "alerts" : tab;
+    const isLive = useSocketConnected();
     // throw new Error("Test error");
 
     return (
         <PageContainer>
             <Stacker direction={"column"}>
                 <PageHeading
-                    heading={`Dashboard - ${TAB_LABELS[activeTab]}`}
-                    subheading={`Welcome ${user?.name}`}
+                    accent="Bounce"
+                    heading="Dashboard"
+                    subheading={user ? `Welcome back, ${user.name}` : undefined}
+                    aside={
+                        <StatusPill colorPalette={isLive ? "green" : "red"} isPulsing={isLive}>
+                            {isLive ? "Live" : "Offline"}
+                        </StatusPill>
+                    }
                 />
                 <Tabs.Root
                     // Each tab only loads its data once it's first opened
@@ -62,7 +65,7 @@ function Index() {
                     onValueChange={(e) => {
                         if (isTab(e.value)) navigate({ search: { tab: e.value }, replace: true });
                     }}
-                    variant="enclosed"
+                    variant="plain"
                     fitted
                     // Stacker aligns to flex-start, so without this the tabs shrink to each tab's content
                     w="full"
@@ -75,10 +78,13 @@ function Index() {
                         bottom={0}
                         insetX={0}
                         zIndex="sticky"
-                        rounded={{ base: 0, md: "l3" }}
-                        bg={{ base: "bg", md: "bg.muted" }}
-                        borderTopWidth={{ base: "1px", md: 0 }}
+                        rounded={{ base: 0, md: "xl" }}
+                        bg="bg.panel"
+                        borderWidth={{ base: 0, md: "1px" }}
+                        borderTopWidth="1px"
+                        p={{ base: 0, md: 1 }}
                         pb={{ base: "calc(0.25rem + env(safe-area-inset-bottom))", md: 1 }}
+                        mb={{ base: 0, md: 4 }}
                         css={{
                             "& [role=tab]": {
                                 flexDirection: { base: "column", md: "row" },
@@ -86,7 +92,14 @@ function Index() {
                                 height: { base: "auto", md: undefined },
                                 py: { base: 1.5, md: undefined },
                                 fontSize: { base: "2xs", md: "sm" },
+                                fontWeight: "medium",
+                                color: "fg.muted",
+                                rounded: "lg",
                                 whiteSpace: "nowrap",
+                            },
+                            "& [role=tab][data-selected]": {
+                                color: { base: "accent", md: "fg" },
+                                bg: { base: "transparent", md: "bg.muted" },
                             },
                             // Stops long labels squashing the icon to nothing
                             "& [role=tab] svg": { boxSize: { base: 5, md: 4 }, flexShrink: 0 },

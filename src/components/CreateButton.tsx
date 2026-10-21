@@ -1,5 +1,5 @@
 import { Button } from "@chakra-ui/react";
-import { TfiPlus } from "react-icons/tfi";
+import { LuPlus } from "react-icons/lu";
 
 type CreateButtonProps = {
     text: string;
@@ -9,7 +9,9 @@ type CreateButtonProps = {
 
 const CreateButton = ({ text, onClick, isLoading }: CreateButtonProps) => {
     return (
-        <Button onClick={onClick} variant={'subtle'} colorPalette={'orange'} loading={isLoading} >{text} <TfiPlus /></Button>
+        <Button onClick={onClick} size="sm" loading={isLoading}>
+            <LuPlus /> {text}
+        </Button>
     )
 }
 

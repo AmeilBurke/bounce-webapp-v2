@@ -5,12 +5,13 @@ import LayoutCreate from '@/components/layouts/LayoutCreate'
 import Stacker from '@/components/Stacker'
 import { type CreateStaffFormValues, CreateStaffSchema } from '@/schemas/create-staff.schema'
 import type { CreateStaffDto } from '@/types/dto/create-staff-dto'
-import { Button } from '@chakra-ui/react'
+import { Button, Stack } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
 import { refresh } from '@/utils/queries'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { isAxiosError } from 'axios'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 
@@ -39,6 +40,8 @@ function RouteComponent() {
 
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    // Which button was pressed, so only that one shows it's loading
+    const [isAddingAnother, setIsAddingAnother] = useState<boolean>(false);
 
     const onCreateStaff = async (
         data: CreateStaffFormValues,
@@ -86,32 +89,37 @@ function RouteComponent() {
         >
 
             <Stacker direction={"column"}>
-                <Form w="full" onSubmit={handleSubmit((data) => onCreateStaff(data))}>
+                <Form w="full" maxW="3xl" bg="bg.panel" borderWidth="1px" rounded="xl" p={[4, null, 6]} onSubmit={handleSubmit((data) => onCreateStaff(data))}>
                     <Stacker direction="column">
                         <CreateStaffForm control={control} errors={errors} />
-                        <Stacker direction="row" justify="flex-end">
+                        <Stack
+                            direction={["column-reverse", null, null, "row"]}
+                            w={["full", null, null, "auto"]}
+                            alignSelf={"flex-end"}
+                            gap={2}
+                        >
                             <Button
-                                type="button"
-                                onClick={handleSubmit((data) =>
-                                    onCreateStaff(data, { addAnother: true })
-                                )}
-                                w={["full", null, null, "auto"]}
-                                alignSelf="flex-end"
-                                disabled={!isValid}
-                                loading={isSubmitting}
+                                variant="outline"
+                                onClick={() => {
+                                    setIsAddingAnother(true);
+                                    return handleSubmit((data) =>
+                                        onCreateStaff(data, { addAnother: true })
+                                    )();
+                                }}
+                                disabled={!isValid || isSubmitting}
+                                loading={isSubmitting && isAddingAnother}
                             >
-                                Add Another
+                                Create & Add Another
                             </Button>
                             <Button
                                 type="submit"
-                                w={["full", null, null, "auto"]}
-                                alignSelf="flex-end"
-                                disabled={!isValid}
-                                loading={isSubmitting}
+                                onClick={() => setIsAddingAnother(false)}
+                                disabled={!isValid || isSubmitting}
+                                loading={isSubmitting && !isAddingAnother}
                             >
                                 Create New Staff
                             </Button>
-                        </Stacker>
+                        </Stack>
                     </Stacker>
                 </Form>
             </Stacker>

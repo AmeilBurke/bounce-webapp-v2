@@ -1,4 +1,4 @@
-import { Badge } from "@chakra-ui/react";
+import StatusPill from "./StatusPill";
 
 type BanStatusBadgeProps = {
     isActive: boolean;
@@ -6,9 +6,9 @@ type BanStatusBadgeProps = {
 
 const BanStatusBadge = ({ isActive }: BanStatusBadgeProps) => {
     return (
-        <Badge colorPalette={isActive ? "red" : "gray"}>
+        <StatusPill colorPalette={isActive ? "red" : "gray"} size="sm">
             {isActive ? "Active" : "Inactive"}
-        </Badge>
+        </StatusPill>
     );
 };
 

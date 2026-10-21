@@ -44,7 +44,7 @@ const FieldSingleSelect = ({
             >
                 <Select.HiddenSelect />
                 <Select.Control>
-                    <Select.Trigger>
+                    <Select.Trigger bg="bg.panel">
                         <Select.ValueText placeholder={placeholder} />
                     </Select.Trigger>
                     <Select.IndicatorGroup>

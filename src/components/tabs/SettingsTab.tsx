@@ -3,7 +3,13 @@ import CreateButton from "../CreateButton";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Stacker from "../Stacker";
 import { staffQueryOptions } from "@/api-requests/staff/staff.queries";
-import { Heading, Text } from "@chakra-ui/react";
+import { Box, Button, HStack, Icon, Text } from "@chakra-ui/react";
+import { LuChevronRight, LuLogOut } from "react-icons/lu";
+import EmptyMessage from "../EmptyMessage";
+import Panel from "../Panel";
+import SectionLabel from "../SectionLabel";
+import StatusPill from "../StatusPill";
+import TabHeader from "../TabHeader";
 import { useMemo, useState } from "react";
 import { Role } from "@/types/Role";
 import Dialog from "../Dialog";
@@ -60,37 +66,58 @@ const SettingsTab = () => {
         }
 
         if (isError) {
-            return <Text>Couldn't load staff</Text>;
+            return <EmptyMessage kind="error" title="Couldn't load staff" />;
         }
 
         if (staff.length === 0) {
-            return <Text>No staff accounts found</Text>;
+            return <EmptyMessage title="No staff accounts found" />;
         }
 
         return (
-            <Stacker direction={"column"}>
+            <Stacker direction={"column"} gap={6}>
                 {ROLE_ORDER.map((role) => {
                     const members = staffByRole[role];
                     if (!members?.length) return null;
 
                     return (
-                        <Stacker direction={"column"} key={role} gap="2">
-                            <Heading as="h3" size="md">
-                                {ROLE_LABELS[role]}
-                            </Heading>
+                        <Stacker direction={"column"} key={role} gap={3}>
+                            <SectionLabel>
+                                {ROLE_LABELS[role]} · {members.length}
+                            </SectionLabel>
 
-                            <Stacker direction={"column"} gap="1">
-                                {members.map((s) => (
-                                    <Text
-                                        onClick={() => openDialog(s)}
+                            <Panel w="full" overflow="hidden">
+                                {members.map((s, index) => (
+                                    <HStack
+                                        asChild
                                         key={s.id}
-                                        color="fg.muted"
+                                        w="full"
+                                        px={4}
+                                        py={3}
+                                        gap={3}
+                                        textAlign="start"
+                                        borderTopWidth={index > 0 ? "1px" : 0}
                                         cursor="pointer"
+                                        _hover={{ bg: "bg.subtle" }}
                                     >
-                                        {s.name}
-                                    </Text>
+                                        <button type="button" onClick={() => openDialog(s)}>
+                                            <Box flex={1} minW={0}>
+                                                <Text fontWeight="medium" overflowWrap="anywhere">
+                                                    {s.name}
+                                                </Text>
+                                                <Text color="fg.muted" fontSize="sm" overflowWrap="anywhere">
+                                                    {s.email}
+                                                </Text>
+                                            </Box>
+                                            {s.id === user?.id && (
+                                                <StatusPill colorPalette="purple" size="sm">
+                                                    You
+                                                </StatusPill>
+                                            )}
+                                            <Icon as={LuChevronRight} color="fg.muted" flexShrink={0} />
+                                        </button>
+                                    </HStack>
                                 ))}
-                            </Stacker>
+                            </Panel>
                         </Stacker>
                     );
                 })}
@@ -100,19 +127,23 @@ const SettingsTab = () => {
 
     return (
         <Stacker direction="column">
-            {
-                user?.role === Role.ADMIN && (
-                    <CreateButton
-                        text="Create New Account"
-                        onClick={onCreateNewAccount}
-                        isLoading={isSubmitting}
-                    />
-                )
-            }
-            <CreateButton
-                text="Sign out"
-                onClick={onSignOut}
-                isLoading={isSubmitting}
+            <TabHeader
+                title="Settings"
+                description="Staff accounts and your own details"
+                aside={
+                    <>
+                        {user?.role === Role.ADMIN && (
+                            <CreateButton
+                                text="New Account"
+                                onClick={onCreateNewAccount}
+                                isLoading={isSubmitting}
+                            />
+                        )}
+                        <Button size="sm" variant="outline" bg="bg.panel" onClick={onSignOut} loading={isSubmitting}>
+                            <LuLogOut /> Sign out
+                        </Button>
+                    </>
+                }
             />
 
             {renderStaff()}

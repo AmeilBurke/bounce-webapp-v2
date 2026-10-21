@@ -1,7 +1,9 @@
-import { HStack, IconButton, Separator, Skeleton, Text } from "@chakra-ui/react";
+import { HStack, IconButton, Skeleton, Text } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
-import { Fragment, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { LuPencil } from "react-icons/lu";
+import EmptyMessage from "./EmptyMessage";
+import Panel from "./Panel";
 import Stacker from "./Stacker";
 import BanStatusBadge from "./BanStatusBadge";
 import BanEdit from "./BanEdit";
@@ -13,9 +15,10 @@ import { canManageBan, formatBanDate, isBanActive, managedVenueIds } from "@/uti
 
 type BanHistoryProps = {
     bans: Ban[];
+    showVenues?: boolean;
 };
 
-const BanHistory = ({ bans }: BanHistoryProps) => {
+const BanHistory = ({ bans, showVenues = true }: BanHistoryProps) => {
     const { data: user } = useQuery(userDetailsQueryOptions);
     const { data: venues, isPending: isVenuesPending } = useQuery(venuesQueryOptions);
     const [editingBanId, setEditingBanId] = useState<Ban["id"] | undefined>(undefined);
@@ -36,14 +39,13 @@ const BanHistory = ({ bans }: BanHistoryProps) => {
         isVenuesPending && (user?.role === Role.ADMIN || user?.role === Role.VENUE_MANAGER);
 
     if (bans.length === 0) {
-        return <Text>No bans on record</Text>;
+        return <EmptyMessage title="No bans on record" />;
     }
 
     return (
-        <Stacker direction="column" gap={4}>
-            {bans.map((ban, index) => (
-                <Fragment key={ban.id}>
-                    {index > 0 && <Separator w="full" />}
+        <Stacker direction="column" gap={3}>
+            {bans.map((ban) => (
+                <Panel key={ban.id} w="full" p={4}>
                     {editingBanId === ban.id ? (
                         <BanEdit
                             ban={ban}
@@ -52,8 +54,10 @@ const BanHistory = ({ bans }: BanHistoryProps) => {
                         />
                     ) : (
                         <Stacker direction="column" gap={1}>
-                            <HStack w="full" justify="space-between">
-                                <Text fontWeight="medium">{ban.reason}</Text>
+                            <HStack w="full" justify="space-between" align="flex-start">
+                                <Text fontWeight="semibold" overflowWrap="anywhere">
+                                    {ban.reason}
+                                </Text>
                                 <HStack gap={1}>
                                     <BanStatusBadge isActive={isBanActive(ban)} />
                                     {isCheckingEditable && <Skeleton boxSize="8" rounded="l2" />}
@@ -72,15 +76,17 @@ const BanHistory = ({ bans }: BanHistoryProps) => {
                             <Text color="fg.muted" fontSize="sm">
                                 {formatBanDate(ban.startDate)} – {formatBanDate(ban.endDate)}
                             </Text>
-                            <Text color="fg.muted" fontSize="sm">
-                                Venues: {ban.venueBans.map((vb) => vb.venue.name).join(", ")}
-                            </Text>
+                            {showVenues && (
+                                <Text color="fg.muted" fontSize="sm">
+                                    Venues: {ban.venueBans.map((vb) => vb.venue.name).join(", ")}
+                                </Text>
+                            )}
                             <Text color="fg.muted" fontSize="sm">
                                 Issued by {ban.createdBy.name}
                             </Text>
                         </Stacker>
                     )}
-                </Fragment>
+                </Panel>
             ))}
         </Stacker>
     );

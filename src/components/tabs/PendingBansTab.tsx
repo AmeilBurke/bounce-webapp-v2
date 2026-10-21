@@ -2,15 +2,23 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { refresh } from "@/utils/queries";
 import { Button, SimpleGrid, Text } from "@chakra-ui/react";
+import { LuCircleCheck } from "react-icons/lu";
 import toast from "react-hot-toast";
 import Stacker from "../Stacker";
 import Dialog from "../Dialog";
 import PendingBanCard from "../PendingBanCard";
-import { CardGridSkeleton, ImageCardSkeleton } from "../Skeletons";
+import EmptyMessage from "../EmptyMessage";
+import SectionLabel from "../SectionLabel";
+import TabHeader from "../TabHeader";
+import StatusPill from "../StatusPill";
+import { CardGridSkeleton, PendingBanCardSkeleton } from "../Skeletons";
 import { pendingBansQueryOptions } from "@/api-requests/bans/bans.queries";
 import approveBan from "@/api-requests/bans/approveBan";
 import deleteBan from "@/api-requests/bans/deleteBan";
 import type { Ban, BanWithPerson } from "@/types/BannedPerson";
+
+// Cards lay the photo beside the details, so they need a wide column
+const GRID_COLUMNS = [1, null, null, null, 2];
 
 const PendingBansTab = () => {
     const queryClient = useQueryClient();
@@ -58,25 +66,33 @@ const PendingBansTab = () => {
 
     const renderBans = () => {
         if (isPending) {
+            return <CardGridSkeleton columns={GRID_COLUMNS} count={4} card={<PendingBanCardSkeleton />} />;
+        }
+
+        if (isError) {
             return (
-                <CardGridSkeleton
-                    columns={[1, 2, null, 4]}
-                    count={4}
-                    card={<ImageCardSkeleton lines={9} />}
+                <EmptyMessage
+                    kind="error"
+                    colorPalette="bad"
+                    title="Couldn't load pending bans"
+                    description="Check your connection and try again"
                 />
             );
         }
 
-        if (isError) {
-            return <Text>Couldn't load pending bans</Text>;
-        }
-
         if (bans.length === 0) {
-            return <Text>No bans are waiting for approval</Text>;
+            return (
+                <EmptyMessage
+                    icon={<LuCircleCheck />}
+                    colorPalette="ok"
+                    title="All caught up"
+                    description="No bans are waiting for approval"
+                />
+            );
         }
 
         return (
-            <SimpleGrid columns={[1, 2, null, 4]} columnGap={4} rowGap={8}>
+            <SimpleGrid columns={GRID_COLUMNS} gap={3} w="full">
                 {bans.map((ban) => (
                     <PendingBanCard
                         key={ban.id}
@@ -91,11 +107,31 @@ const PendingBansTab = () => {
         );
     };
 
+    const renderPill = () => {
+        if (isPending) return <StatusPill colorPalette="gray">Checking…</StatusPill>;
+        if (isError) return <StatusPill colorPalette="bad">Unavailable</StatusPill>;
+        if (bans.length === 0) return <StatusPill colorPalette="ok">All clear</StatusPill>;
+        return (
+            <StatusPill colorPalette="accent" isPulsing>
+                {bans.length} waiting
+            </StatusPill>
+        );
+    };
+
     const isDeleting = banToDelete !== undefined && submittingBanId === banToDelete.id;
 
     return (
         <Stacker direction={"column"}>
-            {renderBans()}
+            <TabHeader
+                title="Pending Bans"
+                description="Bans requested by staff don't take effect until an admin approves them"
+                aside={renderPill()}
+            />
+
+            <Stacker direction={"column"} gap={3}>
+                <SectionLabel>Requests</SectionLabel>
+                {renderBans()}
+            </Stacker>
 
             <Dialog
                 isOpen={banToDelete !== undefined}
@@ -114,7 +150,7 @@ const PendingBansTab = () => {
                         <Button onClick={closeDialog} variant="outline" loading={isDeleting}>
                             Cancel
                         </Button>
-                        <Button onClick={onDelete} colorPalette="red" loading={isDeleting}>
+                        <Button onClick={onDelete} colorPalette="bad" loading={isDeleting}>
                             Reject
                         </Button>
                     </>

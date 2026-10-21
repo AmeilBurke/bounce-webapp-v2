@@ -6,7 +6,10 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { refresh } from "@/utils/queries";
 import { Text, SimpleGrid, Button } from "@chakra-ui/react";
 import AlertCard from "../AlertCard";
-import { CardGridSkeleton, ImageCardSkeleton } from "../Skeletons";
+import { CARD_GRID_COLUMNS, CardGridSkeleton, ImageCardSkeleton } from "../Skeletons";
+import EmptyMessage from "../EmptyMessage";
+import SectionLabel from "../SectionLabel";
+import TabHeader from "../TabHeader";
 import { userDetailsQueryOptions } from "@/api-requests/auth/user.queries";
 import { useState } from "react";
 import Dialog from "../Dialog";
@@ -51,21 +54,27 @@ const AlertTab = () => {
         }
 
         if (isError) {
-            return <Text>Couldn't load alerts</Text>;
+            return <EmptyMessage kind="error" title="Couldn't load alerts" />;
         }
 
         if (alerts.length === 0) {
-            return <Text>No alerts have been issued</Text>;
+            return (
+                <EmptyMessage
+                    title="No alerts"
+                    description="Alerts you issue will show here for every venue"
+                />
+            );
         }
 
         return (
-            <SimpleGrid columns={[2, null, null, 4]} columnGap={4} rowGap={8}>
+            <SimpleGrid columns={CARD_GRID_COLUMNS} gap={3} w="full">
                 {alerts.map((alert) => (
                     <AlertCard
                         key={alert.id}
                         onOpen={() => setAlertIdToDelete(alert.id)}
                         imagePath={alert.imagePath}
                         reason={alert.reason}
+                        startDate={alert.startDate}
                         isAdmin={user?.role === Role.ADMIN}
                     />
                 ))}
@@ -75,12 +84,21 @@ const AlertTab = () => {
 
     return (
         <Stacker direction={"column"}>
-            <CreateButton
-                text="Create New Alert"
-                onClick={async () => await navigate({ to: "/create-alert" })}
+            <TabHeader
+                title="Alerts"
+                description="People to look out for at every venue"
+                aside={
+                    <CreateButton
+                        text="New Alert"
+                        onClick={async () => await navigate({ to: "/create-alert" })}
+                    />
+                }
             />
 
-            {renderAlerts()}
+            <Stacker direction={"column"} gap={3}>
+                <SectionLabel>{alerts ? `${alerts.length} issued` : "Issued"}</SectionLabel>
+                {renderAlerts()}
+            </Stacker>
 
             <Dialog
                 isOpen={isDialogOpen}
