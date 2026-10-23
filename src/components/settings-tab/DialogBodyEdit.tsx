@@ -6,6 +6,7 @@ import type { Staff } from "@/types/Staff";
 import { Button, HStack, Text } from "@chakra-ui/react";
 import editStaff from "@/api-requests/staff/updateStaff";
 import toast from "react-hot-toast";
+import { apiErrorMessage } from "@/utils/errors";
 import {
   UpdateStaffSchema,
   type UpdateStaffFormValues,
@@ -74,9 +75,7 @@ const DialogBodyEdit = ({
       await refresh(queryClient, ["staff"]);
       finish();
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Couldn't update details",
-      );
+      toast.error(apiErrorMessage(err, "Couldn't update details"));
     }
   };
 
@@ -91,9 +90,7 @@ const DialogBodyEdit = ({
       setIsDeleteDialogOpen(false);
       finish();
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Couldn't delete account",
-      );
+      toast.error(apiErrorMessage(err, "Couldn't delete account"));
     } finally {
       setIsDeleting(false);
     }

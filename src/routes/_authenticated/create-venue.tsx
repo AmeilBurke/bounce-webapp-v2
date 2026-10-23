@@ -12,6 +12,7 @@ import { refresh } from "@/utils/queries";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { apiErrorMessage } from "@/utils/errors";
 
 export const Route = createFileRoute("/_authenticated/create-venue")({
   component: RouteComponent,
@@ -22,7 +23,6 @@ function RouteComponent() {
   const {
     control,
     handleSubmit,
-    setError,
     formState: { errors, isValid, isSubmitting },
   } = useForm<CreateVenueFormValues>({
     resolver: zodResolver(CreateVenueSchema),
@@ -48,11 +48,8 @@ function RouteComponent() {
       refresh(queryClient, ["venues"]);
 
       await navigate({ to: "/", search: { tab: "venues" } });
-    } catch {
-      setError("root.serverError", {
-        type: "server",
-        message: "Something went wrong. Please try again.",
-      });
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Couldn't create venue"));
     }
   };
 

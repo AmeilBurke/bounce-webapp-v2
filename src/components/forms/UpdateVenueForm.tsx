@@ -1,18 +1,19 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Controller, type Control, type FieldErrors } from "react-hook-form";
+import FieldInput from "@/components/FieldInput";
 import FieldMultiSelect from "@/components/FieldMultiSelect";
 import { FieldSkeleton } from "@/components/Skeletons";
-import type { UpdateVenueManagersFormValues } from "@/schemas/update-venue-managers.schema";
+import type { UpdateVenueFormValues } from "@/schemas/update-venue.schema";
 import { staffQueryOptions } from "@/api-requests/staff/staff.queries";
 import { Role } from "@/types/Role";
 
-type VenueManagersFieldsProps = {
-  control: Control<UpdateVenueManagersFormValues>;
-  errors: FieldErrors<UpdateVenueManagersFormValues>;
+type UpdateVenueFieldsProps = {
+  control: Control<UpdateVenueFormValues>;
+  errors: FieldErrors<UpdateVenueFormValues>;
 };
 
-const VenueManagersForm = ({ control, errors }: VenueManagersFieldsProps) => {
+const UpdateVenueForm = ({ control, errors }: UpdateVenueFieldsProps) => {
   const { data: staff, isPending } = useQuery(staffQueryOptions);
 
   const managerOptions = useMemo(
@@ -32,9 +33,27 @@ const VenueManagersForm = ({ control, errors }: VenueManagersFieldsProps) => {
     [staff],
   );
 
+  const nameField = (
+    <Controller
+      name="name"
+      control={control}
+      render={({ field }) => (
+        <FieldInput
+          isRequired
+          label="Name"
+          value={field.value ?? ""}
+          onChange={field.onChange}
+          placeholder="Enter venue name"
+          error={errors.name?.message}
+        />
+      )}
+    />
+  );
+
   if (isPending) {
     return (
       <>
+        {nameField}
         <FieldSkeleton label="Venue Managers" />
         <FieldSkeleton label="Duty Managers" />
       </>
@@ -43,6 +62,8 @@ const VenueManagersForm = ({ control, errors }: VenueManagersFieldsProps) => {
 
   return (
     <>
+      {nameField}
+
       <Controller
         name="managers"
         control={control}
@@ -82,4 +103,4 @@ const VenueManagersForm = ({ control, errors }: VenueManagersFieldsProps) => {
   );
 };
 
-export default VenueManagersForm;
+export default UpdateVenueForm;

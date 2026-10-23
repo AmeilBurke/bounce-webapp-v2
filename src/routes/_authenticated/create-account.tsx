@@ -14,6 +14,7 @@ import { isAxiosError } from 'axios'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
+import { apiErrorMessage } from '@/utils/errors'
 
 export const Route = createFileRoute('/_authenticated/create-account')({
     component: RouteComponent,
@@ -73,11 +74,7 @@ function RouteComponent() {
                 return;
             }
 
-            toast.error("Something went wrong. Please try again.");
-            setError("root.serverError", {
-                type: "server",
-                message: "Something went wrong. Please try again.",
-            });
+            toast.error(apiErrorMessage(err, "Couldn't create account"));
         }
     };
 

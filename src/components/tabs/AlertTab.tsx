@@ -16,6 +16,7 @@ import Dialog from "../Dialog";
 import type { Alert } from "@/types/Alert";
 import deleteAlert from "@/api-requests/alerts/deleteAlert";
 import toast from "react-hot-toast";
+import { apiErrorMessage } from "@/utils/errors";
 import { Role } from "@/types/Role";
 
 const AlertTab = () => {
@@ -41,8 +42,7 @@ const AlertTab = () => {
 
             closeDialog();
         } catch (err) {
-            toast.error(String(err));
-            toast.error("Couldn't delete alert");
+            toast.error(apiErrorMessage(err, "Couldn't delete alert"));
         } finally {
             setIsSubmitting(false);
         }

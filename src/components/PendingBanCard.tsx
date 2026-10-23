@@ -1,6 +1,6 @@
 import { Box, Button, Flex, HStack, Stack, Text, Wrap } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
-import { LuCheck, LuX } from "react-icons/lu";
+import { LuCheck, LuPencil, LuX } from "react-icons/lu";
 import Panel from "./Panel";
 import { SkeletonImage } from "./Skeletons";
 import StatusPill from "./StatusPill";
@@ -15,6 +15,7 @@ type PendingBanCardProps = {
     isLocked: boolean;
     onApprove: () => void;
     onDelete: () => void;
+    onEdit: () => void;
 };
 
 const TimelineEnd = ({ label, date, align }: { label: string; date: string; align: "start" | "end" }) => (
@@ -57,7 +58,7 @@ const VenuePill = ({ children }: { children: string }) => (
     </Box>
 );
 
-const PendingBanCard = ({ ban, isApproving, isLocked, onApprove, onDelete }: PendingBanCardProps) => {
+const PendingBanCard = ({ ban, isApproving, isLocked, onApprove, onDelete, onEdit }: PendingBanCardProps) => {
     // Only admins see pending bans, and admins see every venue
     const { data: venues } = useQuery(venuesQueryOptions);
 
@@ -117,6 +118,16 @@ const PendingBanCard = ({ ban, isApproving, isLocked, onApprove, onDelete }: Pen
                     {startNote}
                 </Text>
                 <HStack gap={2} flex={["1", "0 0 auto"]}>
+                    <Button
+                        flex={[1, "none"]}
+                        size="sm"
+                        variant="outline"
+                        rounded="lg"
+                        onClick={onEdit}
+                        disabled={isLocked}
+                    >
+                        <LuPencil /> Edit
+                    </Button>
                     <Button
                         flex={[1, "none"]}
                         size="sm"

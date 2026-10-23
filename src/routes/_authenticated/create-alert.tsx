@@ -10,9 +10,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { refresh } from "@/utils/queries";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { isAxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { apiErrorMessage } from "@/utils/errors";
 
 export const Route = createFileRoute("/_authenticated/create-alert")({
   component: RouteComponent,
@@ -23,7 +23,6 @@ function RouteComponent() {
   const {
     control,
     handleSubmit,
-    setError,
     formState: { errors, isValid, isSubmitting },
   } = useForm<CreateAlertFormValues>({
     resolver: zodResolver(CreateAlertSchema),
@@ -50,15 +49,7 @@ function RouteComponent() {
 
       await navigate({ to: "/" });
     } catch (err) {
-      // The API allows one alert per banned person
-      const isDuplicate = isAxiosError(err) && err.response?.status === 409;
-      toast.error(isDuplicate ? "This person already has an alert" : "Couldn't create alert");
-      setError("root.serverError", {
-        type: "server",
-        message: isDuplicate
-          ? "This person already has an alert."
-          : "Something went wrong. Please try again.",
-      });
+      toast.error(apiErrorMessage(err, "Couldn't create alert"));
     }
   };
 

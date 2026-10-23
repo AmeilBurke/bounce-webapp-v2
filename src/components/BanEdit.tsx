@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { refresh } from "@/utils/queries";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { apiErrorMessage } from "@/utils/errors";
 import Form from "./Form";
 import Stacker from "./Stacker";
 import UpdateBanForm from "./forms/UpdateBanForm";
@@ -54,10 +55,14 @@ const BanEdit = ({ ban, venueOptions, onDone }: BanEditProps) => {
         try {
             await updateBan(updateBanDto, ban.id);
             toast.success("Ban Updated");
-            await refresh(queryClient, ["banned-people"]);
+            // Pending bans can be edited too, so refresh the pending list as well
+            await Promise.all([
+                refresh(queryClient, ["bans"]),
+                refresh(queryClient, ["banned-people"]),
+            ]);
             onDone();
-        } catch {
-            toast.error("Couldn't update ban");
+        } catch (err) {
+            toast.error(apiErrorMessage(err, "Couldn't update ban"));
         }
     };
 

@@ -9,6 +9,7 @@ import SetupForm from "@/components/forms/SetupForm";
 import createNewStaff from "@/api-requests/staff/createNewStaff";
 import type { CreateStaffDto } from "@/types/dto/create-staff-dto";
 import toast from "react-hot-toast";
+import { apiErrorMessage } from "@/utils/errors";
 import getJwt from "@/api-requests/auth/getJwt";
 import Form from "@/components/Form";
 import { useQueryClient } from "@tanstack/react-query";
@@ -23,7 +24,6 @@ function RouteComponent() {
   const {
     control,
     handleSubmit,
-    setError,
     formState: { errors, isValid, isSubmitting },
   } = useForm<SetupFormValues>({
     resolver: zodResolver(SetupSchema),
@@ -58,11 +58,8 @@ function RouteComponent() {
       refresh(queryClient, ["setup-status"]);
 
       await navigate({ to: "/" });
-    } catch {
-      setError("root.serverError", {
-        type: "server",
-        message: "Something went wrong. Please try again.",
-      });
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Couldn't create account"));
     }
   };
 

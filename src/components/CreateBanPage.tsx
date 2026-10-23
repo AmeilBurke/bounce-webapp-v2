@@ -15,6 +15,7 @@ import { refresh } from "@/utils/queries";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { apiErrorMessage } from "@/utils/errors";
 
 type CreateBanPageProps = {
   defaultVenueIds: Venue["id"][];
@@ -33,7 +34,6 @@ const CreateBanPage = ({ defaultVenueIds, subheading, onCreated }: CreateBanPage
   const {
     control,
     handleSubmit,
-    setError,
     reset,
     formState: { errors, isValid, isSubmitting },
   } = useForm<CreateBanFormValues>({
@@ -80,12 +80,8 @@ const CreateBanPage = ({ defaultVenueIds, subheading, onCreated }: CreateBanPage
       } else {
         await onCreated();
       }
-    } catch {
-      toast.error("Couldn't create ban");
-      setError("root.serverError", {
-        type: "server",
-        message: "Something went wrong. Please try again.",
-      });
+    } catch (err) {
+      toast.error(apiErrorMessage(err, "Couldn't create ban"));
     }
   };
 

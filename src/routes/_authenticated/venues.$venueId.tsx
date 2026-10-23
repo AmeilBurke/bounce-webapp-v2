@@ -6,14 +6,15 @@ import CreateButton from "@/components/CreateButton";
 import Dialog from "@/components/Dialog";
 import LayoutCreate from "@/components/layouts/LayoutCreate";
 import Stacker from "@/components/Stacker";
-import VenueManagersEdit from "@/components/VenueManagersEdit";
+import VenueEdit from "@/components/VenueEdit";
 import { Role } from "@/types/Role";
+import type { Venue } from "@/types/Venue";
 import Panel from "@/components/Panel";
 import { Button, HStack, SimpleGrid, Skeleton, SkeletonText, Text } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { LuUsers } from "react-icons/lu";
+import { LuPencil } from "react-icons/lu";
 
 export const Route = createFileRoute("/_authenticated/venues/$venueId")({
   component: RouteComponent,
@@ -28,7 +29,14 @@ function RouteComponent() {
   const { data: peopleAtVenue, isPending, isError } = useQuery(
     bannedPeopleAtVenueQueryOptions(venueId),
   );
-  const [isManagersDialogOpen, setIsManagersDialogOpen] = useState<boolean>(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
+  // Taken when the dialog opens so a save doesn't change its title or form while it animates closed
+  const [venueToEdit, setVenueToEdit] = useState<Venue | undefined>(undefined);
+
+  const openEditDialog = () => {
+    setVenueToEdit(venue);
+    setIsEditDialogOpen(true);
+  };
 
   const managerNames = venue?.managers.map((m) => m.staff.name).join(", ");
   const dutyManagerNames = venue?.dutyManagers.map((m) => m.staff.name).join(", ");
@@ -89,10 +97,10 @@ function RouteComponent() {
                 size="sm"
                 variant="outline"
                 bg="bg.panel"
-                onClick={() => setIsManagersDialogOpen(true)}
+                onClick={openEditDialog}
                 disabled={!venue}
               >
-                <LuUsers /> Edit Managers
+                <LuPencil /> Edit Venue
               </Button>
             </Skeleton>
           )}
@@ -108,15 +116,15 @@ function RouteComponent() {
       </Stacker>
 
       <Dialog
-        isOpen={isManagersDialogOpen}
-        setIsOpen={setIsManagersDialogOpen}
-        title={`Managers For ${venue?.name ?? ""}`}
+        isOpen={isEditDialogOpen}
+        setIsOpen={setIsEditDialogOpen}
+        onExitComplete={() => setVenueToEdit(undefined)}
+        title={`Edit ${venueToEdit?.name ?? ""}`}
         body={
-          venue ? (
-            <VenueManagersEdit
-              key={String(isManagersDialogOpen)}
-              venue={venue}
-              closeDialog={() => setIsManagersDialogOpen(false)}
+          venueToEdit ? (
+            <VenueEdit
+              venue={venueToEdit}
+              closeDialog={() => setIsEditDialogOpen(false)}
             />
           ) : (
             <></>
